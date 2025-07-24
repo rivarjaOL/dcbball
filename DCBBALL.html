@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSC Hoops - Fall Training Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0c0a09; /* A darker, richer background */
+        }
+        .hero-section {
+            /* High-performance gradient replacement for the background image */
+            background: linear-gradient(160deg, #1c1917 0%, #0c0a09 100%);
+        }
+        .day-card, .step-card {
+            background-color: rgba(28, 25, 23, 0.85); /* stone-900 with higher opacity for solid feel */
+            border: 1px solid #44403c; /* stone-700 */
+            transition: border-color 0.3s ease; /* Keep a subtle transition for the border */
+        }
+        
+        /* SCROLLING FIX: Apply performance-heavy hover effects ONLY on devices that can truly hover (like desktops) */
+        @media (hover: hover) and (pointer: fine) {
+            .day-card, .step-card {
+                 transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            }
+            .day-card:hover, .step-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 20px 25px -5px rgba(249, 115, 22, 0.2), 0 10px 10px -5px rgba(249, 115, 22, 0.1);
+                border-color: #f97316;
+            }
+        }
+
+        .grade-note, .gradient-text {
+            background: -webkit-linear-gradient(45deg, #f97316, #f59e0b);
+            -webkit-text-fill-color: transparent;
+        }
+        .cta-button {
+            background-color: #f97316; /* orange-500 */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+        }
+        .cta-button:hover {
+            background-color: #ea580c; /* orange-600 */
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.6);
+        }
+        .step-number {
+            background-color: #f97316;
+            color: white;
+            border-radius: 50%;
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            border: 2px solid #fb923c;
+        }
+        .section-title {
+            border-bottom: 2px solid #f97316;
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="text-gray-300">
+
+    <!-- Hero Section -->
+    <header class="hero-section py-20 sm:py-32">
+        <div class="max-w-4xl mx-auto text-center px-4">
+            <div class="flex justify-center items-center gap-4 mb-4">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.792V6.343A1.5 1.5 0 0019.5 4.843h-3.045M21 12.792c0 5.054-4.146 9.157-9.2 9.157-5.055 0-9.2-4.103-9.2-9.157 0-5.055 4.145-9.158 9.2-9.158 1.843 0 3.566.54 5.015 1.5M21 12.792L18 15M3 12.792h18M12 2.843v18.001" />
+                </svg>
+                <h1 class="text-5xl sm:text-7xl font-extrabold tracking-tight text-white">DSC HOOPS TRAINING</h1>
+            </div>
+            <p class="mt-4 text-xl sm:text-2xl text-gray-300 max-w-2xl mx-auto">Elevate Your Game. Dominate The Court. Unlock your potential with David Cooper Basketball training.</p>
+            <a href="#signup" class="cta-button inline-block text-white font-bold rounded-lg px-10 py-4 mt-10 text-lg shadow-lg">
+                Register Now
+            </a>
+        </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto p-4 sm:p-8">
+        <!-- How to Sign Up Section -->
+        <section id="signup" class="mb-20 sm:mb-24">
+            <h2 class="text-4xl font-bold text-center mb-12 text-white section-title">How to Sign Up</h2>
+            <div class="space-y-10">
+                <!-- Step 1 -->
+                <div class="step-card rounded-2xl p-8 flex items-center gap-6">
+                    <div class="step-number">1</div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-white mb-2">Review the Schedule</h3>
+                        <p class="text-gray-300 text-lg">Find the perfect sessions for your athlete's needs and grade level in the schedule below.</p>
+                    </div>
+                </div>
+                <!-- Step 2 -->
+                <div class="step-card rounded-2xl p-8 text-center">
+                    <div class="flex justify-center items-center gap-6 mb-4">
+                        <div class="step-number">2</div>
+                        <h3 class="text-2xl font-bold text-white">Register Your Athlete</h3>
+                    </div>
+                    <p class="text-gray-300 text-lg max-w-xl mx-auto">Click the button below to open the official registration form in a new tab. This is a required step before scheduling.</p>
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSevISCxXN6phdzoG-H3Ti65JXKcKTf1klCEj0nxPmrXZTShMw/viewform?usp=sharing" target="_blank" class="cta-button inline-block text-white font-bold rounded-lg px-10 py-4 mt-6 text-lg shadow-lg">
+                        Open Registration Form
+                    </a>
+                </div>
+                <!-- Step 3 -->
+                <div class="step-card rounded-2xl p-8 flex items-center gap-6">
+                    <div class="step-number">3</div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-white mb-2">Email to Schedule</h3>
+                        <p class="text-gray-300 text-lg">Once registered, email us your preferred schedule. All scheduling and changes are handled via email.</p>
+                         <a href="mailto:hoops@dscinternationalgroup.com" class="cta-button inline-block text-white font-bold rounded-lg px-8 py-3 mt-5 text-base shadow-lg">
+                            Email to Schedule
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Schedule Section -->
+        <main class="mb-20 sm:mb-24">
+            <h2 class="text-4xl font-bold text-center mb-12 text-white section-title">Weekly Fall Training Schedule</h2>
+            <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                
+                <!-- Monday -->
+                <div class="day-card rounded-2xl p-6">
+                    <h3 class="text-3xl font-bold mb-4 gradient-text">MONDAY</h3>
+                    <div class="border-t border-gray-700 pt-4">
+                        <p class="font-semibold text-xl text-white">Breakfast Club</p>
+                        <p class="text-gray-400 text-lg">5:00AM - 6:30AM</p>
+                    </div>
+                </div>
+
+                <!-- Tuesday -->
+                <div class="day-card rounded-2xl p-6">
+                    <h3 class="text-3xl font-bold mb-4 gradient-text">TUESDAY</h3>
+                    <ul class="space-y-4 divide-y divide-gray-700">
+                        <li class="pt-4 first:pt-0">
+                            <p class="font-semibold text-xl text-white">Personal Training</p>
+                            <p class="text-gray-400 text-lg">3:00PM - 4:00PM</p>
+                        </li>
+                        <li class="pt-4">
+                            <p class="font-semibold text-xl text-white">Personal Training</p>
+                            <p class="text-gray-400 text-lg">4:00PM - 5:00PM</p>
+                        </li>
+                        <li class="pt-4">
+                            <p class="font-semibold text-xl text-white">On Court</p>
+                            <p class="text-gray-400 text-lg">5:00PM - 6:00PM <span class="grade-note block">(6th Grade & Up)</span></p>
+                        </li>
+                        <li class="pt-4">
+                            <p class="font-semibold text-xl text-white">On Court</p>
+                            <p class="text-gray-400 text-lg">6:00PM - 7:00PM <span class="grade-note block">(7th Grade & Up)</span></p>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Wednesday -->
+                <div class="day-card rounded-2xl p-6">
+                    <h3 class="text-3xl font-bold mb-4 gradient-text">WEDNESDAY</h3>
+                    <ul class="space-y-4 divide-y divide-gray-700">
+                        <li class="pt-4 first:pt-0">
+                            <p class="font-semibold text-xl text-white">Breakfast Club</p>
+                            <p class="text-gray-400 text-lg">5:00AM - 6:30AM</p>
+                        </li>
+                        <li class="pt-4">
+                            <p class="font-semibold text-xl text-white">Personal Training</p>
+                            <p class="text-gray-400 text-lg">3:00PM - 4:00PM</p>
+                        </li>
+                        <li class="pt-4">
+                            <p class="font-semibold text-xl text-white">Personal Training</p>
+                            <p class="text-gray-400 text-lg">4:00PM - 5:00PM</p>
+                        </li>
+                        <li class="pt-4">
+                            <p class="font-semibold text-xl text-white">Training & Development</p>
+                            <p class="text-gray-400 text-lg">5:00PM - 6:00PM <span class="grade-note block">(6th Grade & Up)</span></p>
+                        </li>
+                        <li class="pt-4">
+                            <p class="font-semibold text-xl text-white">Training & Development</p>
+                            <p class="text-gray-400 text-lg">6:00PM - 7:00PM <span class="grade-note block">(7th Grade & Up)</span></p>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Friday -->
+                <div class="day-card rounded-2xl p-6">
+                    <h3 class="text-3xl font-bold mb-4 gradient-text">FRIDAY</h3>
+                    <ul class="space-y-4 divide-y divide-gray-700">
+                         <li class="pt-4 first:pt-0">
+                            <p class="font-semibold text-xl text-white">Breakfast Club</p>
+                            <p class="text-gray-400 text-lg">5:00AM - 6:30AM</p>
+                        </li>
+                        <li class="pt-4">
+                            <p class="font-semibold text-xl text-white">Personal Training</p>
+                            <p class="text-gray-400 text-lg">4:00PM - 5:00PM</p>
+                        </li>
+                        <li class="pt-4">
+                            <p class="font-semibold text-xl text-white">Skill Work</p>
+                            <p class="text-gray-400 text-lg">5:00PM - 6:00PM <span class="grade-note block">(6th Grade & Up)</span></p>
+                        </li>
+                        <li class="pt-4">
+                            <p class="font-semibold text-xl text-white">Skill Work</p>
+                            <p class="text-gray-400 text-lg">6:00PM - 7:00PM <span class="grade-note block">(7th Grade & Up)</span></p>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Saturday -->
+                <div class="day-card rounded-2xl p-6">
+                    <h3 class="text-3xl font-bold mb-2 gradient-text">SATURDAY</h3>
+                    <p class="text-base text-amber-400 font-semibold mb-4 tracking-wider">BY APPOINTMENT ONLY</p>
+                    <ul class="space-y-4 divide-y divide-gray-700">
+                        <li class="pt-4 first:pt-0">
+                            <p class="font-semibold text-xl text-white">Personal Training</p>
+                            <p class="text-gray-400 text-lg">8:00AM - 9:00AM</p>
+                        </li>
+                        <li class="pt-4">
+                            <p class="font-semibold text-xl text-white">Personal Training</p>
+                            <p class="text-gray-400 text-lg">9:00AM - 10:00AM</p>
+                        </li>
+                        <li class="pt-4">
+                            <p class="font-semibold text-xl text-white">Skill Work</p>
+                            <p class="text-gray-400 text-lg">10:00AM - 11:00AM <span class="grade-note block">(6th Grade & Up)</span></p>
+                        </li>
+                        <li class="pt-4">
+                            <p class="font-semibold text-xl text-white">Skill Work</p>
+                            <p class="text-gray-400 text-lg">11:00AM - 12:00PM <span class="grade-note block">(7th Grade & Up)</span></p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center border-t border-gray-700 pt-8 mt-16">
+            <div class="text-gray-500">
+                <p class="font-semibold text-lg">All trainings take place at The Executive Health Club</p>
+                <p class="text-base">(*Unless otherwise specified*)</p>
+                <p class="mt-6 text-xl font-bold gradient-text">THANK YOU</p>
+            </div>
+        </footer>
+    </div>
+
+</body>
+</html>
