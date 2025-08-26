@@ -70,6 +70,21 @@
             padding-bottom: 0.5rem;
             display: inline-block;
         }
+        .small-group-session {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(251, 146, 60, 0.05) 100%);
+            border-left: 4px solid #f97316;
+            padding-left: 1rem;
+        }
+        .small-group-badge {
+            background-color: #f97316;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            margin-left: 0.5rem;
+            display: inline-block;
+        }
     </style>
 </head>
 <body class="text-gray-300">
@@ -128,6 +143,50 @@
             </div>
         </section>
 
+        <!-- Small Group Sessions Info -->
+        <section class="mb-16 sm:mb-20">
+            <div class="bg-gradient-to-r from-orange-500/10 to-amber-500/10 border border-orange-500/30 rounded-2xl p-8">
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-bold text-white mb-4">
+                        <span class="gradient-text">Small Group Sessions</span> Information
+                    </h2>
+                    <div class="max-w-3xl mx-auto">
+                        <p class="text-xl text-gray-300 mb-6">
+                            Parents often ask where the small group sessions are located on our schedule. 
+                            <strong class="text-orange-400">All group training sessions are considered small group sessions</strong> and include:
+                        </p>
+                        
+                        <div class="grid md:grid-cols-3 gap-6 mt-8">
+                            <div class="bg-stone-900/50 rounded-xl p-6 border border-orange-500/20">
+                                <h3 class="text-xl font-bold text-orange-400 mb-2">On Court</h3>
+                                <p class="text-gray-300">Group training sessions focused on game situations and court awareness</p>
+                                <p class="text-sm text-orange-300 mt-2 font-semibold">Tuesday Evenings</p>
+                            </div>
+                            
+                            <div class="bg-stone-900/50 rounded-xl p-6 border border-orange-500/20">
+                                <h3 class="text-xl font-bold text-orange-400 mb-2">Training & Development</h3>
+                                <p class="text-gray-300">Comprehensive skill building and basketball fundamentals</p>
+                                <p class="text-sm text-orange-300 mt-2 font-semibold">Wednesday Evenings</p>
+                            </div>
+                            
+                            <div class="bg-stone-900/50 rounded-xl p-6 border border-orange-500/20">
+                                <h3 class="text-xl font-bold text-orange-400 mb-2">Skill Work</h3>
+                                <p class="text-gray-300">Intensive skill development and technique refinement</p>
+                                <p class="text-sm text-orange-300 mt-2 font-semibold">Friday Evenings & Saturday Mornings</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 p-4 bg-orange-500/10 rounded-lg border border-orange-500/30">
+                            <p class="text-lg text-white font-semibold">
+                                💡 <span class="text-orange-400">Quick Answer:</span> 
+                                Look for "On Court," "Training & Development," and "Skill Work" sessions in the schedule below - these are your small group sessions!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Schedule Section -->
         <main class="mb-20 sm:mb-24">
             <h2 class="text-4xl font-bold text-center mb-12 text-white section-title">Weekly Fall Training Schedule</h2>
@@ -154,12 +213,12 @@
                             <p class="font-semibold text-xl text-white">Personal Training</p>
                             <p class="text-gray-400 text-lg">4:00PM - 5:00PM</p>
                         </li>
-                        <li class="pt-4">
-                            <p class="font-semibold text-xl text-white">On Court</p>
+                        <li class="pt-4 small-group-session">
+                            <p class="font-semibold text-xl text-white">On Court <span class="small-group-badge">SMALL GROUP</span></p>
                             <p class="text-gray-400 text-lg">5:00PM - 6:00PM <span class="grade-note block">(6th Grade & Up)</span></p>
                         </li>
-                        <li class="pt-4">
-                            <p class="font-semibold text-xl text-white">On Court</p>
+                        <li class="pt-4 small-group-session">
+                            <p class="font-semibold text-xl text-white">On Court <span class="small-group-badge">SMALL GROUP</span></p>
                             <p class="text-gray-400 text-lg">6:00PM - 7:00PM <span class="grade-note block">(7th Grade & Up)</span></p>
                         </li>
                     </ul>
@@ -181,12 +240,12 @@
                             <p class="font-semibold text-xl text-white">Personal Training</p>
                             <p class="text-gray-400 text-lg">4:00PM - 5:00PM</p>
                         </li>
-                        <li class="pt-4">
-                            <p class="font-semibold text-xl text-white">Training & Development</p>
+                        <li class="pt-4 small-group-session">
+                            <p class="font-semibold text-xl text-white">Training & Development <span class="small-group-badge">SMALL GROUP</span></p>
                             <p class="text-gray-400 text-lg">5:00PM - 6:00PM <span class="grade-note block">(6th Grade & Up)</span></p>
                         </li>
-                        <li class="pt-4">
-                            <p class="font-semibold text-xl text-white">Training & Development</p>
+                        <li class="pt-4 small-group-session">
+                            <p class="font-semibold text-xl text-white">Training & Development <span class="small-group-badge">SMALL GROUP</span></p>
                             <p class="text-gray-400 text-lg">6:00PM - 7:00PM <span class="grade-note block">(7th Grade & Up)</span></p>
                         </li>
                     </ul>
@@ -204,12 +263,12 @@
                             <p class="font-semibold text-xl text-white">Personal Training</p>
                             <p class="text-gray-400 text-lg">4:00PM - 5:00PM</p>
                         </li>
-                        <li class="pt-4">
-                            <p class="font-semibold text-xl text-white">Skill Work</p>
+                        <li class="pt-4 small-group-session">
+                            <p class="font-semibold text-xl text-white">Skill Work <span class="small-group-badge">SMALL GROUP</span></p>
                             <p class="text-gray-400 text-lg">5:00PM - 6:00PM <span class="grade-note block">(6th Grade & Up)</span></p>
                         </li>
-                        <li class="pt-4">
-                            <p class="font-semibold text-xl text-white">Skill Work</p>
+                        <li class="pt-4 small-group-session">
+                            <p class="font-semibold text-xl text-white">Skill Work <span class="small-group-badge">SMALL GROUP</span></p>
                             <p class="text-gray-400 text-lg">6:00PM - 7:00PM <span class="grade-note block">(7th Grade & Up)</span></p>
                         </li>
                     </ul>
@@ -228,16 +287,30 @@
                             <p class="font-semibold text-xl text-white">Personal Training</p>
                             <p class="text-gray-400 text-lg">9:00AM - 10:00AM</p>
                         </li>
-                        <li class="pt-4">
-                            <p class="font-semibold text-xl text-white">Skill Work</p>
+                        <li class="pt-4 small-group-session">
+                            <p class="font-semibold text-xl text-white">Skill Work <span class="small-group-badge">SMALL GROUP</span></p>
                             <p class="text-gray-400 text-lg">10:00AM - 11:00AM <span class="grade-note block">(6th Grade & Up)</span></p>
                         </li>
-                        <li class="pt-4">
-                            <p class="font-semibold text-xl text-white">Skill Work</p>
+                        <li class="pt-4 small-group-session">
+                            <p class="font-semibold text-xl text-white">Skill Work <span class="small-group-badge">SMALL GROUP</span></p>
                             <p class="text-gray-400 text-lg">11:00AM - 12:00PM <span class="grade-note block">(7th Grade & Up)</span></p>
                         </li>
                     </ul>
                 </div>
+            </div>
+            
+            <!-- Small Group Sessions Note -->
+            <div class="mt-12 bg-orange-500/10 border border-orange-500/30 rounded-2xl p-6 text-center">
+                <h3 class="text-2xl font-bold text-white mb-3">
+                    <span class="gradient-text">📍 Parent Reminder</span>
+                </h3>
+                <p class="text-lg text-gray-300">
+                    <strong class="text-orange-400">Small group sessions</strong> are the sessions marked with the orange "SMALL GROUP" badges above:
+                    <span class="text-white font-semibold">On Court, Training & Development, and Skill Work</span>
+                </p>
+                <p class="text-base text-gray-400 mt-2">
+                    These sessions provide focused group instruction and skill development for multiple athletes at once.
+                </p>
             </div>
         </main>
 
