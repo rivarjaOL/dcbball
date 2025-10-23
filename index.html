@@ -3,474 +3,1081 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSC Hoops - Fall Training Schedule</title>
+    <title>DSC Hoops - Elite Basketball Training</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-blue: #203164;
+            --accent-black: #000000;
+            --neutral-white: #ffffff;
+            --secondary-light-blue: #a0b9e8;
+            --highlight-grey: #cccccc;
+            --cta-orange: #f5a623;
+        }
+
+        * {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0c0a09; /* A darker, richer background */
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--neutral-white);
+            color: var(--accent-black);
+            margin: 0;
+            padding: 0;
         }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1.5px;
+        }
+
+        /* Navigation Bar */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(32, 49, 100, 0.1);
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-img {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .brand-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            transition: color 0.2s ease;
+            text-transform: uppercase;
+        }
+
+        .nav-link:hover {
+            color: var(--cta-orange);
+        }
+
+        .nav-cta {
+            background-color: var(--cta-orange);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(245, 166, 35, 0.3);
+        }
+
+        .nav-cta:hover {
+            background-color: #d89320;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(245, 166, 35, 0.4);
+        }
+
+        /* Hero Section */
         .hero-section {
-            /* High-performance gradient replacement for the background image */
-            background: linear-gradient(160deg, #1c1917 0%, #0c0a09 100%);
+            margin-top: 82px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fc 50%, #e8eef9 100%);
+            padding: 80px 32px 100px;
+            position: relative;
+            overflow: hidden;
         }
-        .day-card, .step-card {
-            background-color: rgba(28, 25, 23, 0.85); /* stone-900 with higher opacity for solid feel */
-            border: 1px solid #44403c; /* stone-700 */
-            transition: border-color 0.3s ease; /* Keep a subtle transition for the border */
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(32, 49, 100, 0.05) 0%, transparent 70%);
+            pointer-events: none;
         }
-        
-        /* SCROLLING FIX: Apply performance-heavy hover effects ONLY on devices that can truly hover (like desktops) */
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            text-align: left;
+        }
+
+        .hero-title {
+            font-size: 72px;
+            line-height: 1.1;
+            color: var(--primary-blue);
+            margin: 0 0 24px 0;
+            font-weight: 400;
+        }
+
+        .hero-subtitle {
+            font-size: 22px;
+            line-height: 1.6;
+            color: #4a5568;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .hero-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-logo img {
+            max-width: 100%;
+            height: auto;
+            max-height: 400px;
+            filter: drop-shadow(0 10px 30px rgba(32, 49, 100, 0.15));
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--cta-orange);
+            color: white;
+            padding: 18px 48px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 1px;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(245, 166, 35, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            background-color: #d89320;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 166, 35, 0.4);
+        }
+
+        .cta-button-secondary {
+            background-color: var(--primary-blue);
+            box-shadow: 0 6px 20px rgba(32, 49, 100, 0.3);
+        }
+
+        .cta-button-secondary:hover {
+            background-color: #1a2850;
+            box-shadow: 0 8px 25px rgba(32, 49, 100, 0.4);
+        }
+
+        /* Content Container */
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* Section Styling */
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-size: 56px;
+            color: var(--primary-blue);
+            text-align: center;
+            margin-bottom: 16px;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #718096;
+            font-size: 18px;
+            margin-bottom: 64px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Step Cards */
+        .steps-grid {
+            display: grid;
+            gap: 32px;
+            margin-top: 48px;
+        }
+
+        .step-card {
+            background: white;
+            border: 1px solid rgba(32, 49, 100, 0.1);
+            border-radius: 12px;
+            padding: 40px;
+            display: flex;
+            align-items: flex-start;
+            gap: 32px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
         @media (hover: hover) and (pointer: fine) {
-            .day-card, .step-card {
-                 transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-            }
-            .day-card:hover, .step-card:hover {
-                transform: translateY(-8px);
-                box-shadow: 0 20px 25px -5px rgba(249, 115, 22, 0.2), 0 10px 10px -5px rgba(249, 115, 22, 0.1);
-                border-color: #f97316;
+            .step-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 30px rgba(32, 49, 100, 0.12);
+                border-color: var(--secondary-light-blue);
             }
         }
 
-        .grade-note, .gradient-text {
-            background: -webkit-linear-gradient(45deg, #f97316, #f59e0b);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .cta-button {
-            background-color: #f97316; /* orange-500 */
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
-        }
-        .cta-button:hover {
-            background-color: #ea580c; /* orange-600 */
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.6);
-        }
         .step-number {
-            background-color: #f97316;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #2d4278 100%);
             color: white;
-            border-radius: 50%;
-            width: 3rem;
-            height: 3rem;
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 800;
-            font-size: 1.5rem;
+            font-size: 32px;
+            font-weight: 700;
             flex-shrink: 0;
-            border: 2px solid #fb923c;
+            box-shadow: 0 4px 15px rgba(32, 49, 100, 0.2);
         }
-        .section-title {
-            border-bottom: 2px solid #f97316;
-            padding-bottom: 0.5rem;
-            display: inline-block;
+
+        .step-content h3 {
+            font-size: 32px;
+            color: var(--primary-blue);
+            margin: 0 0 12px 0;
         }
-        .small-group-session {
-            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(251, 146, 60, 0.05) 100%);
-            border-left: 4px solid #f97316;
-            padding-left: 1rem;
+
+        .step-content p {
+            font-size: 17px;
+            line-height: 1.7;
+            color: #4a5568;
+            margin: 0 0 20px 0;
         }
-        .small-group-badge {
-            background-color: #f97316;
-            color: white;
-            font-size: 0.75rem;
+
+        /* Info Section */
+        .info-section {
+            background: linear-gradient(135deg, rgba(160, 185, 232, 0.08) 0%, rgba(32, 49, 100, 0.05) 100%);
+            border: 1px solid rgba(32, 49, 100, 0.1);
+            border-radius: 16px;
+            padding: 56px;
+            margin-bottom: 80px;
+        }
+
+        .info-section h2 {
+            font-size: 42px;
+            color: var(--primary-blue);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .info-section p {
+            text-align: center;
+            font-size: 18px;
+            line-height: 1.7;
+            color: #4a5568;
+            margin-bottom: 48px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+        }
+
+        .info-card {
+            background: white;
+            border: 1px solid rgba(32, 49, 100, 0.1);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .info-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 25px rgba(32, 49, 100, 0.1);
+            }
+        }
+
+        .info-card h3 {
+            font-size: 28px;
+            color: var(--cta-orange);
+            margin-bottom: 12px;
+        }
+
+        .info-card p {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #4a5568;
+            margin-bottom: 16px;
+        }
+
+        .info-day {
+            font-size: 13px;
             font-weight: 600;
-            padding: 0.25rem 0.5rem;
-            border-radius: 9999px;
-            margin-left: 0.5rem;
-            display: inline-block;
+            color: var(--primary-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Pricing Cards */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .pricing-card {
+            background: white;
+            border: 1px solid rgba(32, 49, 100, 0.15);
+            border-radius: 16px;
+            padding: 48px 40px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .pricing-card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 12px 35px rgba(32, 49, 100, 0.15);
+                border-color: var(--primary-blue);
+            }
+        }
+
+        .pricing-card h3 {
+            font-size: 32px;
+            color: var(--primary-blue);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .pricing-card .subtitle {
+            text-align: center;
+            color: #718096;
+            font-size: 16px;
+            margin-bottom: 32px;
+        }
+
+        .pricing-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: rgba(160, 185, 232, 0.05);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(32, 49, 100, 0.08);
+        }
+
+        .pricing-item span:first-child {
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .pricing-item span:last-child {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--cta-orange);
+        }
+
+        /* Premium Package */
+        .premium-card {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #2d4278 100%);
+            border: 2px solid var(--cta-orange);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premium-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 40%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(245, 166, 35, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .premium-badge {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: var(--cta-orange);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 12px rgba(245, 166, 35, 0.4);
+        }
+
+        .premium-card h3 {
+            color: white;
+            margin-top: 40px;
+        }
+
+        .premium-card .subtitle,
+        .premium-card .date-range {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .premium-price {
+            font-size: 64px;
+            font-weight: 700;
+            color: var(--cta-orange);
+            text-align: center;
+            margin: 32px 0 16px;
+        }
+
+        .premium-features {
+            list-style: none;
+            padding: 0;
+            margin: 32px 0;
+        }
+
+        .premium-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .premium-features li::before {
+            content: '✓';
+            font-weight: 700;
+            color: var(--cta-orange);
+            font-size: 20px;
+        }
+
+        /* Discount Section */
+        .discount-section {
+            background: linear-gradient(135deg, rgba(160, 185, 232, 0.15) 0%, rgba(32, 49, 100, 0.08) 100%);
+            border: 2px solid var(--secondary-light-blue);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .discount-section h3 {
+            font-size: 36px;
+            color: var(--primary-blue);
+            margin-bottom: 16px;
+        }
+
+        .discount-section p {
+            font-size: 18px;
+            line-height: 1.7;
+            color: #4a5568;
+            margin: 8px 0;
+        }
+
+        .discount-highlight {
+            color: var(--cta-orange);
+            font-weight: 700;
+        }
+
+        /* Schedule Grid */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+
+        .day-card {
+            background: white;
+            border: 1px solid rgba(32, 49, 100, 0.12);
+            border-radius: 12px;
+            padding: 32px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .day-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 12px 30px rgba(32, 49, 100, 0.12);
+                border-color: var(--cta-orange);
+            }
+        }
+
+        .day-title {
+            font-size: 36px;
+            color: var(--primary-blue);
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 3px solid var(--cta-orange);
+        }
+
+        .session-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .session-item {
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(32, 49, 100, 0.08);
+        }
+
+        .session-item:last-child {
+            border-bottom: none;
+        }
+
+        .session-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--accent-black);
+            margin-bottom: 6px;
+        }
+
+        .session-time {
+            font-size: 15px;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .session-group-highlight {
+            background: linear-gradient(135deg, rgba(32, 49, 100, 0.05) 0%, rgba(160, 185, 232, 0.08) 100%);
+            border-left: 4px solid var(--primary-blue);
+            padding: 16px 16px 16px 20px;
+            margin: 8px -8px;
+            border-radius: 8px;
+        }
+
+        .session-group-highlight .session-name {
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+
+        .grade-note {
+            display: block;
+            font-size: 13px;
+            color: var(--cta-orange);
+            font-weight: 600;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .appointment-note {
+            font-size: 13px;
+            color: var(--cta-orange);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        /* Schedule Note */
+        .schedule-note {
+            background: linear-gradient(135deg, rgba(160, 185, 232, 0.1) 0%, rgba(32, 49, 100, 0.06) 100%);
+            border: 1px solid var(--secondary-light-blue);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            margin-top: 56px;
+        }
+
+        .schedule-note h3 {
+            font-size: 32px;
+            color: var(--primary-blue);
+            margin-bottom: 16px;
+        }
+
+        .schedule-note p {
+            font-size: 17px;
+            line-height: 1.7;
+            color: #4a5568;
+            margin: 8px 0;
+        }
+
+        .note-highlight {
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 48px 32px;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        footer p {
+            margin: 8px 0;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        footer .footer-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--cta-orange);
+            margin-top: 24px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-content {
+                text-align: center;
+            }
+
+            .hero-title {
+                font-size: 56px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 12px 16px;
+            }
+
+            .logo-img {
+                height: 40px;
+            }
+
+            .brand-name {
+                font-size: 18px;
+            }
+
+            .hero-section {
+                padding: 60px 16px 80px;
+            }
+
+            .hero-title {
+                font-size: 42px;
+            }
+
+            .hero-subtitle {
+                font-size: 18px;
+            }
+
+            .section-title {
+                font-size: 42px;
+            }
+
+            .content-container {
+                padding: 0 16px;
+            }
+
+            section {
+                padding: 60px 0;
+            }
+
+            .step-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 32px 24px;
+            }
+
+            .step-content h3 {
+                font-size: 28px;
+            }
+
+            .info-section {
+                padding: 40px 24px;
+            }
+
+            .schedule-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
-<body class="text-gray-300">
+<body>
+    <!-- Navigation Bar -->
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <div class="logo-container">
+                <img src="https://res.cloudinary.com/dwmpppigk/image/upload/v1761251513/unnamed_aslo8h.png" alt="DSC Hoops Logo" class="logo-img">
+                <h1 class="brand-name">DSC HOOPS</h1>
+            </div>
+            <div class="nav-links">
+                <a href="#signup" class="nav-link">Sign Up</a>
+                <a href="#pricing" class="nav-link">Pricing</a>
+                <a href="#schedule" class="nav-link">Schedule</a>
+                <a href="mailto:hoops@dscinternationalgroup.com" class="nav-link nav-cta">Contact Us</a>
+            </div>
+        </div>
+    </nav>
 
     <!-- Hero Section -->
-    <header class="hero-section py-20 sm:py-32">
-        <div class="max-w-4xl mx-auto text-center px-4">
-            <div class="flex justify-center items-center gap-4 mb-4">
-                 <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.792V6.343A1.5 1.5 0 0019.5 4.843h-3.045M21 12.792c0 5.054-4.146 9.157-9.2 9.157-5.055 0-9.2-4.103-9.2-9.157 0-5.055 4.145-9.158 9.2-9.158 1.843 0 3.566.54 5.015 1.5M21 12.792L18 15M3 12.792h18M12 2.843v18.001" />
-                </svg>
-                <h1 class="text-5xl sm:text-7xl font-extrabold tracking-tight text-white">DSC HOOPS TRAINING</h1>
+    <header class="hero-section">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h2 class="hero-title">ELITE BASKETBALL TRAINING</h2>
+                <p class="hero-subtitle">Elevate your game to the next level. Our professional training programs are designed to unlock your full potential on and off the court.</p>
+                <a href="#signup" class="cta-button">Start Your Journey</a>
             </div>
-            <p class="mt-4 text-xl sm:text-2xl text-gray-300 max-w-2xl mx-auto">Elevate Your Game. Dominate The Court. Unlock your potential with David Cooper Basketball training.</p>
-            <a href="#signup" class="cta-button inline-block text-white font-bold rounded-lg px-10 py-4 mt-10 text-lg shadow-lg">
-                Register Now
-            </a>
+            <div class="hero-logo">
+                <img src="https://res.cloudinary.com/dwmpppigk/image/upload/v1761251513/unnamed_aslo8h.png" alt="DSC Hoops">
+            </div>
         </div>
     </header>
 
-    <div class="max-w-4xl mx-auto p-4 sm:p-8">
+    <div class="content-container">
         <!-- How to Sign Up Section -->
-        <section id="signup" class="mb-20 sm:mb-24">
-            <h2 class="text-4xl font-bold text-center mb-12 text-white section-title">How to Sign Up</h2>
-            <div class="space-y-10">
+        <section id="signup">
+            <h2 class="section-title">How to Get Started</h2>
+            <p class="section-subtitle">Begin your basketball training journey in three simple steps</p>
+            
+            <div class="steps-grid">
                 <!-- Step 1 -->
-                <div class="step-card rounded-2xl p-8 flex items-center gap-6">
+                <div class="step-card">
                     <div class="step-number">1</div>
-                    <div>
-                        <h3 class="text-2xl font-bold text-white mb-2">Review the Schedule</h3>
-                        <p class="text-gray-300 text-lg">Find the perfect sessions for your athlete's needs and grade level in the schedule below.</p>
+                    <div class="step-content">
+                        <h3>Review the Schedule</h3>
+                        <p>Explore our comprehensive training schedule to find sessions that fit your athlete's needs, skill level, and grade.</p>
                     </div>
                 </div>
+
                 <!-- Step 2 -->
-                <div class="step-card rounded-2xl p-8 text-center">
-                    <div class="flex justify-center items-center gap-6 mb-4">
-                        <div class="step-number">2</div>
-                        <h3 class="text-2xl font-bold text-white">Register Your Athlete</h3>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Register Your Athlete</h3>
+                        <p>Complete our official registration form to secure your athlete's spot in our training programs.</p>
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSevISCxXN6phdzoG-H3Ti65JXKcKTf1klCEj0nxPmrXZTShMw/viewform?usp=sharing" target="_blank" class="cta-button">Open Registration Form</a>
                     </div>
-                    <p class="text-gray-300 text-lg max-w-xl mx-auto">Click the button below to open the official registration form in a new tab. This is a required step before scheduling.</p>
-                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSevISCxXN6phdzoG-H3Ti65JXKcKTf1klCEj0nxPmrXZTShMw/viewform?usp=sharing" target="_blank" class="cta-button inline-block text-white font-bold rounded-lg px-10 py-4 mt-6 text-lg shadow-lg">
-                        Open Registration Form
-                    </a>
                 </div>
+
                 <!-- Step 3 -->
-                <div class="step-card rounded-2xl p-8 flex items-center gap-6">
+                <div class="step-card">
                     <div class="step-number">3</div>
-                    <div>
-                        <h3 class="text-2xl font-bold text-white mb-2">Email to Schedule</h3>
-                        <p class="text-gray-300 text-lg">Once registered, email us your preferred schedule. All scheduling and changes are handled via email.</p>
-                         <a href="mailto:hoops@dscinternationalgroup.com" class="cta-button inline-block text-white font-bold rounded-lg px-8 py-3 mt-5 text-base shadow-lg">
-                            Email to Schedule
-                        </a>
+                    <div class="step-content">
+                        <h3>Email to Schedule</h3>
+                        <p>Once registered, contact us via email with your preferred training schedule. We handle all scheduling and changes through email communication.</p>
+                        <a href="mailto:hoops@dscinternationalgroup.com" class="cta-button cta-button-secondary">Email to Schedule</a>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Small Group Sessions Info -->
-        <section class="mb-16 sm:mb-20">
-            <div class="bg-gradient-to-r from-orange-500/10 to-amber-500/10 border border-orange-500/30 rounded-2xl p-8">
-                <div class="text-center mb-6">
-                    <h2 class="text-3xl font-bold text-white mb-4">
-                        <span class="gradient-text">Small Group Sessions</span> Information
-                    </h2>
-                    <div class="max-w-3xl mx-auto">
-                        <p class="text-xl text-gray-300 mb-6">
-                            Parents often ask where the small group sessions are located on our schedule. 
-                            <strong class="text-orange-400">All group training sessions are considered small group sessions</strong> and include:
-                        </p>
-                        
-                        <div class="grid md:grid-cols-3 gap-6 mt-8">
-                            <div class="bg-stone-900/50 rounded-xl p-6 border border-orange-500/20">
-                                <h3 class="text-xl font-bold text-orange-400 mb-2">On Court</h3>
-                                <p class="text-gray-300">Group training sessions focused on game situations and court awareness</p>
-                                <p class="text-sm text-orange-300 mt-2 font-semibold">Tuesday Evenings</p>
-                            </div>
-                            
-                            <div class="bg-stone-900/50 rounded-xl p-6 border border-orange-500/20">
-                                <h3 class="text-xl font-bold text-orange-400 mb-2">Training & Development</h3>
-                                <p class="text-gray-300">Comprehensive skill building and basketball fundamentals</p>
-                                <p class="text-sm text-orange-300 mt-2 font-semibold">Wednesday Evenings</p>
-                            </div>
-                            
-                            <div class="bg-stone-900/50 rounded-xl p-6 border border-orange-500/20">
-                                <h3 class="text-xl font-bold text-orange-400 mb-2">Skill Work</h3>
-                                <p class="text-gray-300">Intensive skill development and technique refinement</p>
-                                <p class="text-sm text-orange-300 mt-2 font-semibold">Friday Evenings & Saturday Mornings</p>
-                            </div>
-                        </div>
-                        
-                        <div class="mt-8 p-4 bg-orange-500/10 rounded-lg border border-orange-500/30">
-                            <p class="text-lg text-white font-semibold">
-                                💡 <span class="text-orange-400">Quick Answer:</span> 
-                                Look for "On Court," "Training & Development," and "Skill Work" sessions in the schedule below - these are your small group sessions!
-                            </p>
-                        </div>
+        <section>
+            <div class="info-section">
+                <h2>Small Group Training Sessions</h2>
+                <p>Parents often ask about our small group sessions. All group training sessions provide focused instruction and include:</p>
+                
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>On Court</h3>
+                        <p>Group training focused on game situations and court awareness development</p>
+                        <span class="info-day">Tuesday Evenings</span>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3>Training & Development</h3>
+                        <p>Comprehensive skill building and basketball fundamentals</p>
+                        <span class="info-day">Wednesday Evenings</span>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h3>Skill Work</h3>
+                        <p>Intensive skill development and technique refinement</p>
+                        <span class="info-day">Friday Evenings & Saturday Mornings</span>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Pricing Section -->
-        <section class="mb-16 sm:mb-20">
-            <h2 class="text-4xl font-bold text-center mb-12 text-white section-title">Training Packages & Pricing</h2>
+        <section id="pricing">
+            <h2 class="section-title">Training Packages & Pricing</h2>
+            <p class="section-subtitle">Choose the training package that best fits your athlete's goals and commitment level</p>
             
-            <div class="grid gap-8 lg:grid-cols-2">
-                <!-- Individual/Personalized Training -->
-                <div class="bg-gradient-to-br from-stone-900/90 to-stone-800/90 border border-orange-500/30 rounded-2xl p-8">
-                    <div class="text-center mb-6">
-                        <h3 class="text-2xl font-bold text-white mb-2">Individual/Personalized Training</h3>
-                        <p class="text-gray-300">One-on-one focused training sessions</p>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center p-4 bg-stone-800/50 rounded-lg border border-stone-700">
-                            <span class="text-white font-medium">1 Session</span>
-                            <span class="text-orange-400 font-bold text-xl">$150</span>
+            <div class="pricing-grid">
+                <!-- Individual Training -->
+                <div class="pricing-card">
+                    <h3>Individual Training</h3>
+                    <p class="subtitle">One-on-one focused training sessions</p>
+                    <div>
+                        <div class="pricing-item">
+                            <span>1 Session</span>
+                            <span>$150</span>
                         </div>
-                        <div class="flex justify-between items-center p-4 bg-stone-800/50 rounded-lg border border-stone-700">
-                            <span class="text-white font-medium">5 Sessions</span>
-                            <span class="text-orange-400 font-bold text-xl">$725</span>
+                        <div class="pricing-item">
+                            <span>5 Sessions</span>
+                            <span>$725</span>
                         </div>
-                        <div class="flex justify-between items-center p-4 bg-stone-800/50 rounded-lg border border-stone-700">
-                            <span class="text-white font-medium">10 Sessions</span>
-                            <span class="text-orange-400 font-bold text-xl">$1,400</span>
+                        <div class="pricing-item">
+                            <span>10 Sessions</span>
+                            <span>$1,400</span>
                         </div>
-                        <div class="flex justify-between items-center p-4 bg-stone-800/50 rounded-lg border border-stone-700">
-                            <span class="text-white font-medium">15 Sessions</span>
-                            <span class="text-orange-400 font-bold text-xl">$1,925</span>
+                        <div class="pricing-item">
+                            <span>15 Sessions</span>
+                            <span>$1,925</span>
                         </div>
-                        <div class="flex justify-between items-center p-4 bg-stone-800/50 rounded-lg border border-stone-700">
-                            <span class="text-white font-medium">20 Sessions</span>
-                            <span class="text-orange-400 font-bold text-xl">$2,200</span>
+                        <div class="pricing-item">
+                            <span>20 Sessions</span>
+                            <span>$2,200</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Small Group Training -->
-                <div class="bg-gradient-to-br from-stone-900/90 to-stone-800/90 border border-orange-500/30 rounded-2xl p-8">
-                    <div class="text-center mb-6">
-                        <h3 class="text-2xl font-bold text-white mb-2">Small Group Training</h3>
-                        <p class="text-gray-300">Group sessions with focused instruction</p>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center p-4 bg-stone-800/50 rounded-lg border border-stone-700">
-                            <span class="text-white font-medium">1 Session</span>
-                            <span class="text-orange-400 font-bold text-xl">$85</span>
+                <div class="pricing-card">
+                    <h3>Small Group Training</h3>
+                    <p class="subtitle">Group sessions with focused instruction</p>
+                    <div>
+                        <div class="pricing-item">
+                            <span>1 Session</span>
+                            <span>$85</span>
                         </div>
-                        <div class="flex justify-between items-center p-4 bg-stone-800/50 rounded-lg border border-stone-700">
-                            <span class="text-white font-medium">5 Sessions</span>
-                            <span class="text-orange-400 font-bold text-xl">$375</span>
+                        <div class="pricing-item">
+                            <span>5 Sessions</span>
+                            <span>$375</span>
                         </div>
-                        <div class="flex justify-between items-center p-4 bg-stone-800/50 rounded-lg border border-stone-700">
-                            <span class="text-white font-medium">10 Sessions</span>
-                            <span class="text-orange-400 font-bold text-xl">$700</span>
+                        <div class="pricing-item">
+                            <span>10 Sessions</span>
+                            <span>$700</span>
                         </div>
-                        <div class="flex justify-between items-center p-4 bg-stone-800/50 rounded-lg border border-stone-700">
-                            <span class="text-white font-medium">15 Sessions</span>
-                            <span class="text-orange-400 font-bold text-xl">$1,000</span>
+                        <div class="pricing-item">
+                            <span>15 Sessions</span>
+                            <span>$1,000</span>
                         </div>
-                        <div class="flex justify-between items-center p-4 bg-stone-800/50 rounded-lg border border-stone-700">
-                            <span class="text-white font-medium">20 Sessions</span>
-                            <span class="text-orange-400 font-bold text-xl">$1,250</span>
+                        <div class="pricing-item">
+                            <span>20 Sessions</span>
+                            <span>$1,250</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Premium Packages -->
-            <div class="grid gap-8 lg:grid-cols-2 mt-8">
+            <div class="pricing-grid">
                 <!-- Workhouse Package -->
-                <div class="bg-gradient-to-br from-orange-500/20 to-amber-500/20 border-2 border-orange-500 rounded-2xl p-8 relative overflow-hidden">
-                    <div class="absolute top-4 right-6 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                        BEST VALUE
-                    </div>
-                    <div class="text-center mb-6 mt-8">
-                        <h3 class="text-3xl font-bold text-white mb-2">Workhouse Package</h3>
-                        <p class="text-gray-300">Full Fall Training Experience</p>
-                        <p class="text-sm text-orange-300 mt-2">September 2 - November 22</p>
-                    </div>
+                <div class="pricing-card premium-card">
+                    <div class="premium-badge">Best Value</div>
+                    <h3>Workhouse Package</h3>
+                    <p class="subtitle">Full Fall Training Experience</p>
+                    <p class="date-range" style="text-align: center; margin-top: -16px; margin-bottom: 24px; font-size: 14px;">September 2 - November 22</p>
                     
-                    <div class="text-center mb-6">
-                        <div class="text-5xl font-bold text-orange-400 mb-2">$2,700</div>
-                        <p class="text-gray-300">Complete Fall Package</p>
-                    </div>
+                    <div class="premium-price">$2,700</div>
+                    <p style="text-align: center; color: rgba(255, 255, 255, 0.8); margin-bottom: 32px;">Complete Fall Package</p>
 
-                    <div class="space-y-3 mb-6">
-                        <div class="flex items-center gap-3">
-                            <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
-                            <span class="text-white">5 Days a week training</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
-                            <span class="text-white">60+ workouts available</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
-                            <span class="text-white">3 days breakfast club</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
-                            <span class="text-white">3 days strength & conditioning</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="w-2 h-2 bg-orange-500 rounded-full"></div>
-                            <span class="text-white">1 weekly personal training</span>
-                        </div>
-                    </div>
+                    <ul class="premium-features">
+                        <li>5 Days a week training</li>
+                        <li>60+ workouts available</li>
+                        <li>3 days breakfast club</li>
+                        <li>3 days strength & conditioning</li>
+                        <li>1 weekly personal training</li>
+                    </ul>
                 </div>
 
                 <!-- Workhouse All Out -->
-                <div class="bg-gradient-to-br from-stone-900/90 to-black/90 border-2 border-amber-500 rounded-2xl p-8 relative overflow-hidden">
-                    <div class="absolute top-4 right-6 bg-amber-500 text-black px-3 py-1 rounded-full text-sm font-bold">
-                        PRO LEVEL
-                    </div>
-                    <div class="text-center mb-6 mt-8">
-                        <h3 class="text-3xl font-bold text-white mb-2">"Workhouse All Out"</h3>
-                        <p class="text-gray-300">Year Round Pro Experience</p>
-                        <p class="text-sm text-amber-300 mt-2">For Serious Aspiring Professionals</p>
-                    </div>
+                <div class="pricing-card premium-card">
+                    <div class="premium-badge">Pro Level</div>
+                    <h3>"Workhouse All Out"</h3>
+                    <p class="subtitle">Year Round Pro Experience</p>
+                    <p class="date-range" style="text-align: center; margin-top: -16px; margin-bottom: 24px; font-size: 14px;">For Serious Aspiring Professionals</p>
                     
-                    <div class="text-center mb-6">
-                        <div class="text-5xl font-bold text-amber-400 mb-2">$25,000</div>
-                        <p class="text-gray-300">Full Year Program</p>
-                    </div>
+                    <div class="premium-price">$25,000</div>
+                    <p style="text-align: center; color: rgba(255, 255, 255, 0.8); margin-bottom: 24px;">Full Year Program</p>
 
-                    <div class="text-center">
-                        <p class="text-orange-300 font-semibold mb-4">*Inquire for more details*</p>
-                        <p class="text-gray-400 text-sm">Designed for serious aspiring professional and professional players</p>
-                        <a href="mailto:hoops@dscinternationalgroup.com?subject=Workhouse All Out Inquiry" class="cta-button inline-block text-white font-bold rounded-lg px-6 py-3 mt-4 text-base shadow-lg">
-                            Inquire Now
-                        </a>
+                    <p style="text-align: center; color: var(--cta-orange); font-weight: 600; font-size: 16px; margin: 32px 0;">Inquire for more details</p>
+                    <p style="text-align: center; color: rgba(255, 255, 255, 0.7); font-size: 15px; margin-bottom: 24px;">Designed for serious aspiring professional and professional players</p>
+                    <div style="text-align: center;">
+                        <a href="mailto:hoops@dscinternationalgroup.com?subject=Workhouse All Out Inquiry" class="cta-button">Inquire Now</a>
                     </div>
                 </div>
             </div>
 
             <!-- Family Discount -->
-            <div class="mt-8 bg-green-500/10 border border-green-500/30 rounded-2xl p-6 text-center">
-                <h3 class="text-2xl font-bold text-white mb-3">
-                    <span class="gradient-text">👨‍👩‍👧‍👦 Family First Discount</span>
-                </h3>
-                <p class="text-xl text-gray-300">
-                    <strong class="text-green-400">10% discount per sibling</strong> - Training together, growing together!
-                </p>
-                <p class="text-base text-gray-400 mt-2">
-                    Applies to all training packages when multiple siblings are enrolled.
-                </p>
+            <div class="discount-section">
+                <h3>Family First Discount</h3>
+                <p><span class="discount-highlight">10% discount per sibling</span> - Training together, growing together</p>
+                <p style="font-size: 16px; color: #718096;">Applies to all training packages when multiple siblings are enrolled</p>
             </div>
         </section>
 
         <!-- Schedule Section -->
-        <main class="mb-20 sm:mb-24">
-            <h2 class="text-4xl font-bold text-center mb-12 text-white section-title">Weekly Fall Training Schedule</h2>
-            <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                
+        <section id="schedule">
+            <h2 class="section-title">Weekly Training Schedule</h2>
+            <p class="section-subtitle">Fall training sessions designed to develop skills and build confidence</p>
+            
+            <div class="schedule-grid">
                 <!-- Monday -->
-                <div class="day-card rounded-2xl p-6">
-                    <h3 class="text-3xl font-bold mb-4 gradient-text">MONDAY</h3>
-                    <div class="border-t border-gray-700 pt-4">
-                        <p class="font-semibold text-xl text-white">Breakfast Club</p>
-                        <p class="text-gray-400 text-lg">5:00AM - 6:30AM</p>
-                    </div>
+                <div class="day-card">
+                    <h3 class="day-title">MONDAY</h3>
+                    <ul class="session-list">
+                        <li class="session-item">
+                            <div class="session-name">Breakfast Club</div>
+                            <div class="session-time">5:00AM - 6:30AM</div>
+                        </li>
+                    </ul>
                 </div>
 
                 <!-- Tuesday -->
-                <div class="day-card rounded-2xl p-6">
-                    <h3 class="text-3xl font-bold mb-4 gradient-text">TUESDAY</h3>
-                    <ul class="space-y-4 divide-y divide-gray-700">
-                        <li class="pt-4 first:pt-0">
-                            <p class="font-semibold text-xl text-white">Personal Training</p>
-                            <p class="text-gray-400 text-lg">3:30PM - 4:30PM</p>
+                <div class="day-card">
+                    <h3 class="day-title">TUESDAY</h3>
+                    <ul class="session-list">
+                        <li class="session-item">
+                            <div class="session-name">Personal Training</div>
+                            <div class="session-time">4:00PM - 5:00PM</div>
                         </li>
-                        <li class="pt-4">
-                            <p class="font-semibold text-xl text-white">Personal Training</p>
-                            <p class="text-gray-400 text-lg">4:00PM - 5:00PM</p>
-                        </li>
-                        <li class="pt-4 small-group-session">
-                            <p class="font-semibold text-xl text-white">On Court <span class="small-group-badge">SMALL GROUP</span></p>
-                            <p class="text-gray-400 text-lg">5:00PM - 6:00PM <span class="grade-note block">(6th Grade & Under)</span></p>
-                        </li>
-                        <li class="pt-4 small-group-session">
-                            <p class="font-semibold text-xl text-white">On Court <span class="small-group-badge">SMALL GROUP</span></p>
-                            <p class="text-gray-400 text-lg">6:00PM - 7:00PM <span class="grade-note block">(7th Grade & Up)</span></p>
+                        <li class="session-item session-group-highlight">
+                            <div class="session-name">On Court</div>
+                            <div class="session-time">6:00PM - 7:00PM<span class="grade-note">All Ages</span></div>
                         </li>
                     </ul>
                 </div>
-                
+
                 <!-- Wednesday -->
-                <div class="day-card rounded-2xl p-6">
-                    <h3 class="text-3xl font-bold mb-4 gradient-text">WEDNESDAY</h3>
-                    <ul class="space-y-4 divide-y divide-gray-700">
-                        <li class="pt-4 first:pt-0">
-                            <p class="font-semibold text-xl text-white">Breakfast Club</p>
-                            <p class="text-gray-400 text-lg">5:00AM - 6:30AM</p>
+                <div class="day-card">
+                    <h3 class="day-title">WEDNESDAY</h3>
+                    <ul class="session-list">
+                        <li class="session-item">
+                            <div class="session-name">Breakfast Club</div>
+                            <div class="session-time">5:00AM - 6:30AM</div>
                         </li>
-                        <li class="pt-4">
-                            <p class="font-semibold text-xl text-white">Personal Training</p>
-                            <p class="text-gray-400 text-lg">3:00PM - 4:00PM</p>
+                        <li class="session-item">
+                            <div class="session-name">Personal Training</div>
+                            <div class="session-time">3:00PM - 4:00PM</div>
                         </li>
-                        <li class="pt-4">
-                            <p class="font-semibold text-xl text-white">Personal Training</p>
-                            <p class="text-gray-400 text-lg">4:00PM - 5:00PM</p>
+                        <li class="session-item">
+                            <div class="session-name">Personal Training</div>
+                            <div class="session-time">4:00PM - 5:00PM</div>
                         </li>
-                        <li class="pt-4 small-group-session">
-                            <p class="font-semibold text-xl text-white">Training & Development <span class="small-group-badge">SMALL GROUP</span></p>
-                            <p class="text-gray-400 text-lg">5:00PM - 6:00PM <span class="grade-note block">(6th Grade & Under)</span></p>
+                        <li class="session-item session-group-highlight">
+                            <div class="session-name">Training & Development</div>
+                            <div class="session-time">5:00PM - 6:00PM<span class="grade-note">6th Grade & Under</span></div>
                         </li>
-                        <li class="pt-4 small-group-session">
-                            <p class="font-semibold text-xl text-white">Training & Development <span class="small-group-badge">SMALL GROUP</span></p>
-                            <p class="text-gray-400 text-lg">6:00PM - 7:00PM <span class="grade-note block">(7th Grade & Up)</span></p>
+                        <li class="session-item session-group-highlight">
+                            <div class="session-name">Training & Development</div>
+                            <div class="session-time">6:00PM - 7:00PM<span class="grade-note">7th Grade & Up</span></div>
                         </li>
                     </ul>
                 </div>
-                
+
                 <!-- Friday -->
-                <div class="day-card rounded-2xl p-6">
-                    <h3 class="text-3xl font-bold mb-4 gradient-text">FRIDAY</h3>
-                    <ul class="space-y-4 divide-y divide-gray-700">
-                         <li class="pt-4 first:pt-0">
-                            <p class="font-semibold text-xl text-white">Breakfast Club</p>
-                            <p class="text-gray-400 text-lg">5:00AM - 6:30AM</p>
+                <div class="day-card">
+                    <h3 class="day-title">FRIDAY</h3>
+                    <ul class="session-list">
+                        <li class="session-item">
+                            <div class="session-name">Breakfast Club</div>
+                            <div class="session-time">5:00AM - 6:30AM</div>
                         </li>
-                        <li class="pt-4">
-                            <p class="font-semibold text-xl text-white">Personal Training</p>
-                            <p class="text-gray-400 text-lg">4:00PM - 5:00PM</p>
+                        <li class="session-item">
+                            <div class="session-name">Personal Training</div>
+                            <div class="session-time">4:00PM - 5:00PM</div>
                         </li>
-                        <li class="pt-4 small-group-session">
-                            <p class="font-semibold text-xl text-white">Skill Work <span class="small-group-badge">SMALL GROUP</span></p>
-                            <p class="text-gray-400 text-lg">5:00PM - 6:00PM <span class="grade-note block">(6th Grade & Under)</span></p>
+                        <li class="session-item session-group-highlight">
+                            <div class="session-name">Skill Work</div>
+                            <div class="session-time">5:00PM - 6:00PM<span class="grade-note">6th Grade & Under</span></div>
                         </li>
-                        <li class="pt-4 small-group-session">
-                            <p class="font-semibold text-xl text-white">Skill Work <span class="small-group-badge">SMALL GROUP</span></p>
-                            <p class="text-gray-400 text-lg">6:00PM - 7:00PM <span class="grade-note block">(7th Grade & Up)</span></p>
+                        <li class="session-item session-group-highlight">
+                            <div class="session-name">Skill Work</div>
+                            <div class="session-time">6:00PM - 7:00PM<span class="grade-note">7th Grade & Up</span></div>
                         </li>
                     </ul>
                 </div>
 
                 <!-- Saturday -->
-                <div class="day-card rounded-2xl p-6">
-                    <h3 class="text-3xl font-bold mb-2 gradient-text">SATURDAY</h3>
-                    <p class="text-base text-amber-400 font-semibold mb-4 tracking-wider">BY APPOINTMENT ONLY</p>
-                    <ul class="space-y-4 divide-y divide-gray-700">
-                        <li class="pt-4 first:pt-0">
-                            <p class="font-semibold text-xl text-white">Personal Training</p>
-                            <p class="text-gray-400 text-lg">8:00AM - 9:00AM</p>
+                <div class="day-card">
+                    <h3 class="day-title">SATURDAY</h3>
+                    <span class="appointment-note">By Appointment Only</span>
+                    <ul class="session-list">
+                        <li class="session-item">
+                            <div class="session-name">Personal Training</div>
+                            <div class="session-time">8:00AM - 9:00AM</div>
                         </li>
-                        <li class="pt-4">
-                            <p class="font-semibold text-xl text-white">Personal Training</p>
-                            <p class="text-gray-400 text-lg">9:00AM - 10:00AM</p>
+                        <li class="session-item">
+                            <div class="session-name">Personal Training</div>
+                            <div class="session-time">9:00AM - 10:00AM</div>
                         </li>
-                        <li class="pt-4 small-group-session">
-                            <p class="font-semibold text-xl text-white">Skill Work <span class="small-group-badge">SMALL GROUP</span></p>
-                            <p class="text-gray-400 text-lg">10:00AM - 11:00AM <span class="grade-note block">(6th Grade & Under)</span></p>
+                        <li class="session-item session-group-highlight">
+                            <div class="session-name">Skill Work</div>
+                            <div class="session-time">10:00AM - 11:00AM<span class="grade-note">6th Grade & Under</span></div>
                         </li>
-                        <li class="pt-4 small-group-session">
-                            <p class="font-semibold text-xl text-white">Skill Work <span class="small-group-badge">SMALL GROUP</span></p>
-                            <p class="text-gray-400 text-lg">11:00AM - 12:00PM <span class="grade-note block">(7th Grade & Up)</span></p>
+                        <li class="session-item session-group-highlight">
+                            <div class="session-name">Skill Work</div>
+                            <div class="session-time">11:00AM - 12:00PM<span class="grade-note">7th Grade & Up</span></div>
                         </li>
                     </ul>
                 </div>
             </div>
-            
-            <!-- Small Group Sessions Note -->
-            <div class="mt-12 bg-orange-500/10 border border-orange-500/30 rounded-2xl p-6 text-center">
-                <h3 class="text-2xl font-bold text-white mb-3">
-                    <span class="gradient-text">📍 Parent Reminder</span>
-                </h3>
-                <p class="text-lg text-gray-300">
-                    <strong class="text-orange-400">Small group sessions</strong> are the sessions marked with the orange "SMALL GROUP" badges above:
-                    <span class="text-white font-semibold">On Court, Training & Development, and Skill Work</span>
-                </p>
-                <p class="text-base text-gray-400 mt-2">
-                    These sessions provide focused group instruction and skill development for multiple athletes at once.
-                </p>
-            </div>
-        </main>
 
-        <!-- Footer -->
-        <footer class="text-center border-t border-gray-700 pt-8 mt-16">
-            <div class="text-gray-500">
-                <p class="font-semibold text-lg">All trainings take place at The Executive Health Club</p>
-                <p class="text-base">(*Unless otherwise specified*)</p>
-                <p class="mt-6 text-xl font-bold gradient-text">THANK YOU</p>
+            <!-- Schedule Note -->
+            <div class="schedule-note">
+                <h3>Parent Reminder</h3>
+                <p><span class="note-highlight">Small group sessions</span> are highlighted above and include: On Court, Training & Development, and Skill Work</p>
+                <p>These sessions provide focused group instruction and skill development for multiple athletes</p>
             </div>
-        </footer>
+        </section>
     </div>
 
+    <!-- Footer -->
+    <footer>
+        <p>All trainings take place at The Executive Health Club</p>
+        <p>(Unless otherwise specified)</p>
+        <p class="footer-title">THANK YOU</p>
+    </footer>
 </body>
 </html>
