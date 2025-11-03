@@ -439,12 +439,13 @@
         .premium-card::before {
             content: '';
             position: absolute;
-            top: 0;
+            top: 80px;
             right: 0;
             width: 40%;
-            height: 100%;
+            height: calc(100% - 80px);
             background: radial-gradient(circle at top right, rgba(245, 166, 35, 0.15) 0%, transparent 70%);
             pointer-events: none;
+            z-index: 1;
         }
 
         .premium-badge {
@@ -459,7 +460,16 @@
             font-weight: 700;
             letter-spacing: 1px;
             text-transform: uppercase;
-            box-shadow: 0 4px 12px rgba(245, 166, 35, 0.4);
+            z-index: 30;
+            border: 1px solid var(--cta-orange);
+            box-shadow: none;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            outline: none;
+            isolation: isolate;
+            will-change: transform;
         }
 
         .premium-card h3 {
@@ -856,7 +866,7 @@
                 <!-- Individual Training -->
                 <div class="pricing-card">
                     <h3>Individual Training</h3>
-                    <p class="subtitle">One-on-one focused training sessions</p>
+                    <p class="subtitle">Small group focused training sessions</p>
                     <div>
                         <div class="pricing-item">
                             <span>1 Session</span>
@@ -927,7 +937,7 @@
                         <li>60+ workouts available</li>
                         <li>3 days breakfast club</li>
                         <li>3 days strength & conditioning</li>
-                        <li>1 weekly personal training</li>
+                        <li>1 weekly small group training</li>
                     </ul>
                 </div>
 
