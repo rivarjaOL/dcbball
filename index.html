@@ -613,6 +613,32 @@
             font-weight: 700;
         }
 
+        .session-andover-highlight {
+            background: linear-gradient(135deg, rgba(32, 163, 158, 0.05) 0%, rgba(100, 200, 195, 0.08) 100%);
+            border-left: 4px solid #20a39e;
+            padding: 16px 16px 16px 20px;
+            margin: 8px -8px;
+            border-radius: 8px;
+        }
+
+        .session-andover-highlight .session-name {
+            color: #20a39e;
+            font-weight: 700;
+        }
+
+        .andover-note {
+            background: linear-gradient(135deg, rgba(32, 163, 158, 0.05) 0%, rgba(100, 200, 195, 0.08) 100%);
+            border-left: 4px solid #20a39e;
+            padding: 16px 20px;
+            margin: 24px auto 48px;
+            border-radius: 8px;
+            max-width: 700px;
+            text-align: center;
+            color: #20a39e;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
         .grade-note {
             display: block;
             font-size: 13px;
@@ -865,8 +891,8 @@
             <div class="pricing-grid">
                 <!-- Individual Training -->
                 <div class="pricing-card">
-                    <h3>Individual Training</h3>
-                    <p class="subtitle">Small group focused training sessions</p>
+                    <h3>Individualized / Personalized</h3>
+                    <p class="subtitle">Small group focused training sessions with 2-4 players</p>
                     <div>
                         <div class="pricing-item">
                             <span>1 Session</span>
@@ -894,7 +920,7 @@
                 <!-- Small Group Training -->
                 <div class="pricing-card">
                     <h3>Small Group Training</h3>
-                    <p class="subtitle">Group sessions with focused instruction</p>
+                    <p class="subtitle">Group sessions with focused instruction with 10-12 players</p>
                     <div>
                         <div class="pricing-item">
                             <span>1 Session</span>
@@ -971,6 +997,8 @@
         <section id="schedule">
             <h2 class="section-title">Weekly Training Schedule</h2>
             <p class="section-subtitle">Fall training sessions designed to develop skills and build confidence</p>
+            <p class="andover-note">Note: All Andover, Massachusetts sessions are highlighted in teal</p>
+            <p style="text-align: center; color: #4a5568; font-size: 16px; margin: -24px auto 48px; max-width: 700px;">All other Sessions are hosted at the Executive Healthclub:</p>
             
             <div class="schedule-grid">
                 <!-- Monday -->
@@ -981,6 +1009,18 @@
                             <div class="session-name">Breakfast Club</div>
                             <div class="session-time">5:00AM - 6:30AM</div>
                         </li>
+                        <li class="session-item session-andover-highlight">
+                            <div class="session-name">Andover Training</div>
+                            <div class="session-time">4:00PM - 5:00PM</div>
+                        </li>
+                        <li class="session-item session-andover-highlight">
+                            <div class="session-name">Andover Training: Small Group 6th Grade & Under</div>
+                            <div class="session-time">5:00PM - 6:00PM</div>
+                        </li>
+                        <li class="session-item session-andover-highlight">
+                            <div class="session-name">Andover Training: Small Group, 7th Grade and up</div>
+                            <div class="session-time">6:00PM - 7:00PM</div>
+                        </li>
                     </ul>
                 </div>
 
@@ -989,7 +1029,11 @@
                     <h3 class="day-title">TUESDAY</h3>
                     <ul class="session-list">
                         <li class="session-item">
-                            <div class="session-name">Personal Training</div>
+                            <div class="session-name">Breakfast Club</div>
+                            <div class="session-time">5:00AM - 6:30AM</div>
+                        </li>
+                        <li class="session-item">
+                            <div class="session-name">Individualized / Personalized Training</div>
                             <div class="session-time">4:00PM - 5:00PM</div>
                         </li>
                         <li class="session-item session-group-highlight">
@@ -1008,11 +1052,11 @@
                             <div class="session-time">5:00AM - 6:30AM</div>
                         </li>
                         <li class="session-item">
-                            <div class="session-name">Personal Training</div>
+                            <div class="session-name">Individualized / Personalized Training</div>
                             <div class="session-time">3:00PM - 4:00PM</div>
                         </li>
                         <li class="session-item">
-                            <div class="session-name">Personal Training</div>
+                            <div class="session-name">Individualized / Personalized Training</div>
                             <div class="session-time">4:00PM - 5:00PM</div>
                         </li>
                         <li class="session-item session-group-highlight">
@@ -1026,6 +1070,29 @@
                     </ul>
                 </div>
 
+                <!-- Thursday -->
+                <div class="day-card">
+                    <h3 class="day-title">THURSDAY</h3>
+                    <ul class="session-list">
+                        <li class="session-item">
+                            <div class="session-name">Breakfast Club</div>
+                            <div class="session-time">5:00AM - 6:30AM</div>
+                        </li>
+                        <li class="session-item session-andover-highlight">
+                            <div class="session-name">Andover Training</div>
+                            <div class="session-time">4:00PM - 5:00PM</div>
+                        </li>
+                        <li class="session-item session-andover-highlight">
+                            <div class="session-name">Andover Training: Small Group 6th Grade & Under</div>
+                            <div class="session-time">5:00PM - 6:00PM</div>
+                        </li>
+                        <li class="session-item session-andover-highlight">
+                            <div class="session-name">Andover Training: Small Group, 7th Grade and up</div>
+                            <div class="session-time">6:00PM - 7:00PM</div>
+                        </li>
+                    </ul>
+                </div>
+
                 <!-- Friday -->
                 <div class="day-card">
                     <h3 class="day-title">FRIDAY</h3>
@@ -1035,7 +1102,7 @@
                             <div class="session-time">5:00AM - 6:30AM</div>
                         </li>
                         <li class="session-item">
-                            <div class="session-name">Personal Training</div>
+                            <div class="session-name">Individualized / Personalized Training</div>
                             <div class="session-time">4:00PM - 5:00PM</div>
                         </li>
                         <li class="session-item session-group-highlight">
@@ -1055,11 +1122,11 @@
                     <span class="appointment-note">By Appointment Only</span>
                     <ul class="session-list">
                         <li class="session-item">
-                            <div class="session-name">Personal Training</div>
+                            <div class="session-name">Individualized / Personalized Training</div>
                             <div class="session-time">8:00AM - 9:00AM</div>
                         </li>
                         <li class="session-item">
-                            <div class="session-name">Personal Training</div>
+                            <div class="session-name">Individualized / Personalized Training</div>
                             <div class="session-time">9:00AM - 10:00AM</div>
                         </li>
                         <li class="session-item session-group-highlight">
