@@ -1,0 +1,18 @@
+# Sensitive data - form responses with personal information
+*.csv
+**/*.csv
+
+# Personal/private files
+Response Management/
+*.pdf
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
