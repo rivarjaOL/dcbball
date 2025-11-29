@@ -189,13 +189,15 @@
             backdrop-filter: blur(10px);
             z-index: 999;
             opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none; /* Prevent intercepting clicks when invisible */
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            pointer-events: none;
+            visibility: hidden; /* Completely remove from rendering when inactive */
         }
 
         .mobile-menu-overlay.active {
             opacity: 1;
-            pointer-events: auto; /* Allow clicks when overlay is visible */
+            pointer-events: auto;
+            visibility: visible;
         }
 
         .mobile-menu {
@@ -207,17 +209,19 @@
             background: rgba(15, 23, 42, 0.98);
             backdrop-filter: blur(20px);
             box-shadow: -4px 0 30px rgba(0, 0, 0, 0.3);
-            transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55), visibility 0.4s ease;
             z-index: 1000;
             padding: 48px 32px;
             overflow-y: auto;
             border-left: 1px solid rgba(255, 255, 255, 0.1);
-            pointer-events: none; /* Prevent intercepting clicks when off-screen */
+            pointer-events: none;
+            visibility: hidden; /* Completely remove from rendering when inactive */
         }
 
         .mobile-menu.active {
             right: 0;
-            pointer-events: auto; /* Allow clicks when menu is visible */
+            pointer-events: auto;
+            visibility: visible;
         }
 
         .mobile-menu .nav-link {
@@ -420,6 +424,8 @@
             clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
             position: relative;
             overflow: hidden;
+            touch-action: manipulation; /* Ensure proper touch handling on mobile */
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on iOS */
         }
 
         .cta-button::before {
@@ -514,6 +520,7 @@
             box-shadow: var(--shadow-lg);
             position: relative;
             overflow: hidden;
+            isolation: isolate; /* Create new stacking context for contained elements */
         }
 
         .step-card::before {
@@ -1097,6 +1104,8 @@
             position: relative;
             transition: opacity 0.4s ease, transform 0.4s ease;
             overflow: hidden;
+            isolation: isolate; /* Create new stacking context */
+            z-index: 1; /* Ensure banner is above any stray overlays */
         }
 
         .registration-banner::before {
