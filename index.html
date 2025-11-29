@@ -190,10 +190,12 @@
             z-index: 999;
             opacity: 0;
             transition: opacity 0.3s ease;
+            pointer-events: none; /* Prevent intercepting clicks when invisible */
         }
 
         .mobile-menu-overlay.active {
             opacity: 1;
+            pointer-events: auto; /* Allow clicks when overlay is visible */
         }
 
         .mobile-menu {
