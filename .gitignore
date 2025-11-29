@@ -5,6 +5,8 @@
 # Data exports and response management
 Response Management/
 *.pdf
+# Exception: Allow the registration form PDF
+!DSC_HOOPS_Registration_Form.pdf
 
 # Form response exports (Google Forms)
 *Form Responses*.csv
