@@ -212,10 +212,12 @@
             padding: 48px 32px;
             overflow-y: auto;
             border-left: 1px solid rgba(255, 255, 255, 0.1);
+            pointer-events: none; /* Prevent intercepting clicks when off-screen */
         }
 
         .mobile-menu.active {
             right: 0;
+            pointer-events: auto; /* Allow clicks when menu is visible */
         }
 
         .mobile-menu .nav-link {
