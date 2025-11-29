@@ -2,9 +2,13 @@
 *.csv
 **/*.csv
 
-# Personal/private files
+# Data exports and response management
 Response Management/
 *.pdf
+
+# Form response exports (Google Forms)
+*Form Responses*.csv
+*schedule*.csv
 
 # OS files
 .DS_Store
@@ -15,4 +19,8 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+
+
+
 
