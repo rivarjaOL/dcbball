@@ -93,21 +93,22 @@
         .hero {
             padding: 160px 24px 100px; text-align: center;
             position: relative; overflow: hidden;
+            background: var(--navy);
         }
         .hero::before {
-            content: ''; position: absolute; inset: 0;
+            content: ''; position: absolute; inset: 0; z-index: 0;
             background: radial-gradient(ellipse 60% 50% at 50% 30%, rgba(249,115,22,0.07) 0%, transparent 70%);
         }
         /* Faint court lines */
         .hero::after {
-            content: ''; position: absolute;
+            content: ''; position: absolute; z-index: 0;
             top: 50%; left: 50%; width: 300px; height: 300px;
             border: 1px solid rgba(255,255,255,0.03);
             border-radius: 50%;
             transform: translate(-50%, -50%);
         }
         .hero-inner {
-            position: relative; z-index: 1; max-width: 720px; margin: 0 auto;
+            position: relative; max-width: 720px; margin: 0 auto;
         }
         .hero-tag {
             display: inline-block;
@@ -125,6 +126,15 @@
         .hero h1 em {
             font-style: normal; color: var(--orange);
             display: block;
+        }
+        /* Brush-stroke logo */
+        .hero-logo-mark {
+            display: block;
+            max-width: min(600px, 90vw);
+            height: auto;
+            margin: 0 auto 8px;
+            pointer-events: none;
+            user-select: none;
         }
         .hero-desc {
             font-size: 17px; color: var(--gray-4); font-weight: 400;
@@ -507,7 +517,7 @@
     <header class="hero">
         <div class="hero-inner">
             <span class="hero-tag">Summer 2026</span>
-            <h1>WORKHOUSE<em>WARRIOR</em>SUMMER</h1>
+            <h1><img src="workhouse-logo.png" alt="Workhouse" class="hero-logo-mark"><em>WARRIOR</em>SUMMER</h1>
             <p class="hero-desc">9 weeks. 3 days a week. Train before the sun comes up, and walk into fall season ready.</p>
             <div class="hero-btns">
                 <a href="https://docs.google.com/forms/d/1tIES8Y_c-Fp957NolfjGFlnlwN67uKyyzPD_ONJNnj8/viewform" target="_blank" rel="noopener noreferrer" class="btn btn-orange">Register Now <span class="arrow">&nearr;</span></a>
