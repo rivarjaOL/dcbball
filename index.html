@@ -49,6 +49,114 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
+        /* Summer Promo Bar */
+        .summer-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1100;
+            background: var(--orange-vibrant);
+            padding: 0;
+            text-align: center;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .summer-bar.dismissed {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .summer-bar-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 48px;
+            max-width: 100%;
+            flex-wrap: nowrap;
+        }
+        .summer-bar-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--navy-deep);
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .summer-bar-sep {
+            color: rgba(15,23,42,0.3);
+            font-weight: 300;
+            margin: 0 4px;
+        }
+        .summer-bar-save {
+            font-weight: 800;
+            color: var(--navy-deep);
+            background: rgba(255,255,255,0.25);
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .summer-bar-link {
+            color: var(--navy-deep);
+            font-weight: 800;
+            font-size: 14px;
+            text-decoration: none;
+            border-bottom: 2px solid rgba(15,23,42,0.4);
+            padding-bottom: 1px;
+            transition: border-color 0.15s;
+            white-space: nowrap;
+        }
+        .summer-bar-link:hover {
+            border-color: var(--navy-deep);
+        }
+        .summer-bar-close {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: rgba(15,23,42,0.5);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px 8px;
+            line-height: 1;
+            transition: color 0.15s;
+        }
+        .summer-bar-close:hover { color: var(--navy-deep); }
+
+        /* Push nav and content down when bar is visible */
+        .summer-bar-active .nav-bar {
+            top: 40px;
+        }
+        .summer-bar-active .hero-section {
+            margin-top: 136px;
+        }
+        .summer-bar-active .mobile-menu {
+            top: 136px;
+            height: calc(100vh - 136px);
+        }
+
+        @media (max-width: 768px) {
+            .summer-bar-inner {
+                padding: 8px 40px 8px 16px;
+                gap: 6px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .summer-bar-text { font-size: 12px; }
+            .summer-bar-save { font-size: 11px; padding: 2px 8px; }
+            .summer-bar-link { font-size: 12px; }
+            .summer-bar-sep { display: none; }
+            .summer-bar-active .nav-bar { top: 36px; }
+            .summer-bar-active .hero-section { margin-top: 124px; }
+            .summer-bar-active .mobile-menu {
+                top: 124px;
+                height: calc(100vh - 124px);
+            }
+        }
+
         /* Skip to Content Link */
         .skip-to-content {
             position: absolute;
@@ -1668,6 +1776,18 @@
     <!-- Skip to Content Link -->
     <a href="#signup" class="skip-to-content">Skip to main content</a>
 
+    <!-- Summer Program Promo Bar -->
+    <div class="summer-bar" id="summerBar">
+        <div class="summer-bar-inner">
+            <span class="summer-bar-text">Summer training registration is open</span>
+            <span class="summer-bar-sep">&middot;</span>
+            <span class="summer-bar-save">Save $250 before May 1st</span>
+            <span class="summer-bar-sep">&middot;</span>
+            <a href="summer/" class="summer-bar-link">View Summer Program &rarr;</a>
+        </div>
+        <button class="summer-bar-close" id="summerBarClose" aria-label="Dismiss summer banner">&times;</button>
+    </div>
+
     <!-- Navigation Bar -->
     <nav class="nav-bar">
         <div class="nav-container">
@@ -2211,6 +2331,22 @@
                     }
                 }
             });
+        });
+
+        // Summer Promo Bar
+        const summerBar = document.getElementById('summerBar');
+        const summerBarClose = document.getElementById('summerBarClose');
+
+        if (localStorage.getItem('summerBarDismissed') !== 'true') {
+            document.body.classList.add('summer-bar-active');
+        } else {
+            summerBar.classList.add('dismissed');
+        }
+
+        summerBarClose.addEventListener('click', () => {
+            summerBar.classList.add('dismissed');
+            document.body.classList.remove('summer-bar-active');
+            localStorage.setItem('summerBarDismissed', 'true');
         });
 
         // Email Copy Functionality
