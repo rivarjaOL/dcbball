@@ -218,6 +218,39 @@
             font-size: 13px; color: var(--gray-5);
         }
 
+        /* ---- EXPERIENCE ---- */
+        .experience { padding: 80px 24px; }
+        .exp-inner { max-width: 860px; margin: 0 auto; }
+        .exp-heading {
+            font-family: var(--display);
+            font-size: clamp(40px, 6vw, 56px);
+            letter-spacing: 2px; line-height: 1; margin-bottom: 12px;
+            text-align: center;
+        }
+        .exp-heading em { font-style: normal; color: var(--orange); display: block; }
+        .exp-sub {
+            font-size: 15px; color: var(--gray-5); text-align: center;
+            max-width: 500px; margin: 0 auto 52px; line-height: 1.7;
+        }
+        .exp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .exp-card {
+            background: var(--navy-2);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px; padding: 32px 28px;
+            position: relative; overflow: hidden;
+        }
+        .exp-card::before {
+            content: ''; position: absolute; top: 0; left: 24px; right: 24px; height: 2px;
+            border-radius: 2px;
+            background: linear-gradient(90deg, transparent, var(--orange), transparent);
+        }
+        .exp-title {
+            font-family: var(--display);
+            font-size: 22px; letter-spacing: 1.5px; margin-bottom: 10px;
+        }
+        .exp-text { font-size: 14px; color: var(--gray-4); line-height: 1.7; }
+        .exp-text strong { color: var(--orange); font-weight: 600; }
+
         /* ---- DETAILS STRIP ---- */
         .details {
             padding: 80px 24px;
@@ -398,6 +431,7 @@
             font-size: clamp(44px, 7vw, 72px);
             letter-spacing: 3px; line-height: 0.9; margin-bottom: 16px;
         }
+        .final-inner h2 em { font-style: normal; color: var(--orange); }
         .final-inner p {
             font-size: 15px; color: var(--gray-5); margin-bottom: 32px; line-height: 1.7;
         }
@@ -468,6 +502,7 @@
 
             .hero { padding: 120px 20px 72px; }
             .pricing-cards { grid-template-columns: 1fr; }
+            .exp-grid { grid-template-columns: 1fr; }
             .detail-row { grid-template-columns: 1fr; gap: 4px; }
             .detail-key { margin-bottom: 0; }
             .note { grid-template-columns: 1fr; gap: 8px; }
@@ -518,7 +553,7 @@
         <div class="hero-inner">
             <span class="hero-tag">Summer 2026</span>
             <h1><img src="workhouse-logo.png" alt="Workhouse" class="hero-logo-mark"><em>WARRIOR</em>SUMMER</h1>
-            <p class="hero-desc">9 weeks. 3 days a week. Train before the sun comes up, and walk into fall season ready.</p>
+            <p class="hero-desc">Get a whole season better in a single summer. Elite training, pro guests, and a program built to make you unrecognizable by fall.</p>
             <div class="hero-btns">
                 <a href="https://docs.google.com/forms/d/1tIES8Y_c-Fp957NolfjGFlnlwN67uKyyzPD_ONJNnj8/viewform" target="_blank" rel="noopener noreferrer" class="btn btn-orange">Register Now <span class="arrow">&nearr;</span></a>
                 <a href="#details" class="btn btn-ghost">Program Details</a>
@@ -554,6 +589,28 @@
             </div>
             <p class="cd-note" id="cdNote">Save $250 with early registration</p>
             <p class="cd-expired" id="cdExpired">Early bird pricing has ended. Standard rate applies.</p>
+        </div>
+    </section>
+
+    <!-- The Experience -->
+    <section class="experience">
+        <div class="exp-inner">
+            <h2 class="exp-heading sr">GET A WHOLE SEASON BETTER<em>IN A SUMMER</em></h2>
+            <p class="exp-sub sr">This isn't just a summer program. It's 9 weeks designed to make you unrecognizable by fall.</p>
+            <div class="exp-grid">
+                <div class="exp-card sr">
+                    <h3 class="exp-title">ELITE TRAINING</h3>
+                    <p class="exp-text">27 sessions of focused, high-intensity work across 9 weeks. Skill development, conditioning, and game IQ &mdash; built to give you a <strong>full-season edge</strong> before the first tip-off.</p>
+                </div>
+                <div class="exp-card sr">
+                    <h3 class="exp-title">PRO &amp; CELEBRITY GUESTS</h3>
+                    <p class="exp-text">Throughout the summer, <strong>professional players, elite trainers, and special celebrity guests</strong> will make appearances &mdash; bringing real-world insight and energy you won't find anywhere else.</p>
+                </div>
+                <div class="exp-card sr">
+                    <h3 class="exp-title">MORE COMING SOON</h3>
+                    <p class="exp-text">We're not done announcing. <strong>More surprises, more guests, and more reasons</strong> to be part of this summer are on the way. Stay locked in.</p>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -657,7 +714,7 @@
             </div>
             <div class="note sr">
                 <span class="note-label">Schedule</span>
-                <p>The detailed weekly training schedule is coming soon. We'll share session breakdowns and programming info as we get closer to June.</p>
+                <p>The detailed weekly training schedule, guest appearances, and additional programming info are being finalized. We'll share everything as we get closer to June.</p>
             </div>
         </div>
     </section>
@@ -665,8 +722,8 @@
     <!-- Final CTA -->
     <section class="final-cta">
         <div class="final-inner sr">
-            <h2>LOCK IN<br>YOUR SPOT</h2>
-            <p>Don't wait on it. Early bird deadline is May 1st.</p>
+            <h2>THIS SUMMER CHANGES<br><em>EVERYTHING</em></h2>
+                <p>Pro guests, elite training, and a program built to transform your game. Early bird deadline is May 1st &mdash; don't miss the cut.</p>
             <div class="hero-btns">
                 <a href="https://docs.google.com/forms/d/1tIES8Y_c-Fp957NolfjGFlnlwN67uKyyzPD_ONJNnj8/viewform" target="_blank" rel="noopener noreferrer" class="btn btn-orange">Register Now <span class="arrow">&nearr;</span></a>
                 <a href="mailto:hoops@dscinternationalgroup.com?subject=Workhouse%20Warrior%20Summer%20Inquiry" class="btn btn-ghost">Questions? Email Us</a>
