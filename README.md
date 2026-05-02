@@ -53,7 +53,7 @@ The GitHub Actions workflow:
 
 1. Installs dependencies with `npm ci`
 2. Builds with `npm run build`
-3. Copies `dist/index.html` to `dist/404.html` for SPA fallback
+3. Copies `dist/index.html` to `dist/404.html` and `dist/summer/index.html`
 4. Publishes `dist` to GitHub Pages
 
 Production Vite builds use the `/dcbball/` base path.

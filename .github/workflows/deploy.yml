@@ -32,7 +32,10 @@ jobs:
         run: npm run build
 
       - name: Copy index.html to 404.html for SPA fallback
-        run: cp dist/index.html dist/404.html
+        run: |
+          mkdir -p dist/summer
+          cp dist/index.html dist/404.html
+          cp dist/index.html dist/summer/index.html
 
       - uses: actions/configure-pages@v5
 

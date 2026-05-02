@@ -107,9 +107,9 @@ Current lint status may include shadcn fast-refresh warnings in `src/components/
 
 - **Trigger:** push to `main`
 - **Workflow:** `.github/workflows/deploy.yml`
-- **Pipeline:** checkout, setup Node, `npm ci`, `npm run build`, copy `dist/index.html` to `dist/404.html`, upload `dist` to GitHub Pages
+- **Pipeline:** checkout, setup Node, `npm ci`, `npm run build`, copy `dist/index.html` to both `dist/404.html` and `dist/summer/index.html`, upload `dist` to GitHub Pages
 - **Vite base path:** production builds use `/dcbball/` in `vite.config.ts`
-- **SPA fallback:** `404.html` allows direct visits to `/summer`
+- **SPA routes:** `dist/summer/index.html` serves `/summer` with HTTP 200, and `404.html` remains as a fallback
 - **No env vars or secrets are required**
 
 ---
