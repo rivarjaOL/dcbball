@@ -24,7 +24,7 @@ const signupSteps = [
   {
     n: "03",
     title: "Submit and we'll be in touch",
-    body: "After you submit, DSC Hoops follows up to confirm your athlete's spot and walk you through the Executive Health Club membership before June 16.",
+    body: "After you submit, we'll follow up to confirm your athlete's spot and walk you through the Executive Health Club membership if required.",
   },
 ];
 
@@ -373,9 +373,9 @@ const Summer = () => {
                 <span className="text-orange">Full program, full send.</span>
               </h2>
               <p className="mt-4 max-w-2xl font-ui text-ink/80">
-                Early bird's closed. The work isn't. Lock in nine weeks of
-                5 AM Warrior training at $4,000 — or grab weekly registration
-                if the full summer isn't on the table.
+                The work isn't. Lock in nine weeks of 5 AM Warrior training at
+                $4,000 — or grab weekly registration if the full summer isn't on
+                the table.
               </p>
             </div>
             <div className="md:col-span-5">
@@ -590,8 +590,9 @@ const Summer = () => {
             </div>
             <div className="col-span-12 md:col-span-4 md:text-right">
               <p className="font-ui text-ink/70">
-                Full 9-week commitment is now at the standard summer rate.
-                Weekly registration stays flexible.
+                The full nine weeks bundle every session into one tuition—your
+                athlete gets the full Warrior arc, not piecemeal weeks. Weekly
+                registration stays flexible.
               </p>
             </div>
           </div>
@@ -608,9 +609,9 @@ const Summer = () => {
                   Full Program
                 </div>
                 <h3 className="mt-6 font-display text-5xl uppercase leading-[0.9] md:text-6xl">
-                  Standard
+                  Complete
                   <br />
-                  Full Program
+                  Summer Track
                 </h3>
                 <div className="mt-6 flex items-baseline gap-3">
                   <div className="font-display text-6xl text-orange md:text-7xl">
@@ -621,7 +622,7 @@ const Summer = () => {
                   </div>
                 </div>
                 <div className="mt-1 font-mono-display text-sm text-ink/50">
-                  Standard summer rate
+                  One tuition · all 27 sessions
                 </div>
                 <ul className="mt-8 space-y-3 font-ui">
                   {[
@@ -640,7 +641,7 @@ const Summer = () => {
                   onClick={jumpToRegistration("standard")}
                   className="btn-brutal mt-8"
                 >
-                  Register Standard →
+                  Register full program →
                 </a>
               </div>
             </div>
