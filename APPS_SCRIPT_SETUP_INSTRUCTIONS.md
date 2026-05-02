@@ -5,15 +5,16 @@ This document explains how to set up the automatic email notification system for
 ## Prerequisites
 
 - Access to the Google Sheet that receives form responses from the registration form
-- The form is located at: https://docs.google.com/forms/d/1wTZ_uWOXX9aNXNUSIN4q3HnQrhTAkb0W9eJO_moAboY/edit
+- The form is located at: https://docs.google.com/forms/d/1tIES8Y_c-Fp957NolfjGFlnlwN67uKyyzPD_ONJNnj8/viewform
 - The tracking sheet is at: https://docs.google.com/spreadsheets/d/1SwJiDkuAVBlcTsCkliZUGUyiE65AOE_JaHdf7-aclLM/edit?resourcekey=&gid=241800929#gid=241800929
+- Notification emails go to `hoops@dscinternationalgroup.com`, with `jason.t.rivard@gmail.com` copied.
 
 ## Setup Steps
 
 ### Step 1: Open the Form Responses Sheet
 
 1. Open the Google Sheet that receives responses from your registration form
-2. This should be the sheet that has columns matching your CSV sample (Timestamp, Email Address, Athlete's Name, etc.)
+2. This should be the sheet connected to the Workhouse Warrior Summer 2026 form, with columns matching your CSV sample (Timestamp, Email Address, Athlete's Name, etc.)
 
 ### Step 2: Open Apps Script Editor
 

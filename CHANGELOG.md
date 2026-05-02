@@ -1,5 +1,13 @@
 # DSC Hoops Website - Project Updates
 
+## May 2026
+
+### May 2, 2026
+- **Summer Site Launch:**
+  - Made the Workhouse Warrior Summer 2026 page the main live website at the root URL
+  - Redirected the old `/summer/` path back to the main site so families land on one registration page
+  - Updated the Apps Script setup notes to reference the current summer registration form and notification recipients
+
 ## November 2025
 
 ### November 29, 2025
