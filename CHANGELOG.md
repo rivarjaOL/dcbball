@@ -8,6 +8,11 @@
   - Redirected the old `/summer/` path back to the main site so families land on one registration page
   - Updated the Apps Script setup notes to reference the current summer registration form and notification recipients
 
+- **Summer Registration Redesign:**
+  - Migrated the approved Workhouse Warrior Summer React preview into the live site
+  - Added the in-page registration packet that mirrors the Google Form fields and posts to the same Google Form response endpoint
+  - Updated GitHub Pages deployment to build the Vite app before publishing
+
 ## November 2025
 
 ### November 29, 2025

@@ -8,6 +8,13 @@ Response Management/
 # Exception: Allow the registration form PDF
 !DSC_HOOPS_Registration_Form.pdf
 
+# Frontend dependencies and build output
+node_modules/
+dist/
+.vite/
+.playwright-mcp/
+.qa/
+
 # Form response exports (Google Forms)
 *Form Responses*.csv
 *schedule*.csv

@@ -1,0 +1,186 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Workhouse Basketball — Athletic Brutalist Design System
+   All colors MUST be HSL. Navy + Orange on bone white. */
+
+@layer base {
+  :root {
+    /* Core palette */
+    --background: 40 33% 97%;         /* bone */
+    --foreground: 220 60% 9%;         /* near-black navy */
+
+    --ink: 220 60% 9%;                /* primary text / brutalist black-navy */
+    --bone: 40 33% 97%;               /* off-white paper */
+    --concrete: 30 10% 88%;           /* soft grey divider */
+    --concrete-deep: 30 8% 72%;
+
+    --navy: 218 55% 18%;              /* deep brand navy */
+    --navy-deep: 220 60% 9%;
+    --orange: 18 95% 54%;             /* signal orange */
+    --orange-bright: 22 100% 58%;
+    --teal: 178 65% 38%;              /* Andover highlight */
+
+    --card: 40 33% 97%;
+    --card-foreground: 220 60% 9%;
+
+    --popover: 40 33% 97%;
+    --popover-foreground: 220 60% 9%;
+
+    --primary: 220 60% 9%;
+    --primary-foreground: 40 33% 97%;
+
+    --secondary: 218 55% 18%;
+    --secondary-foreground: 40 33% 97%;
+
+    --muted: 30 10% 92%;
+    --muted-foreground: 220 20% 32%;
+
+    --accent: 18 95% 54%;
+    --accent-foreground: 220 60% 9%;
+
+    --destructive: 0 84% 50%;
+    --destructive-foreground: 40 33% 97%;
+
+    --border: 220 60% 9%;
+    --input: 220 20% 85%;
+    --ring: 18 95% 54%;
+
+    --radius: 0;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 96px;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Chakra Petch', system-ui, sans-serif;
+    font-feature-settings: 'ss01', 'cv01';
+  }
+
+  ::selection {
+    background: hsl(var(--orange));
+    color: hsl(var(--ink));
+  }
+}
+
+@layer components {
+  .font-display {
+    font-family: 'Anton', 'Arial Narrow', sans-serif;
+    letter-spacing: 0;
+    line-height: 0.85;
+  }
+  .font-mono-display {
+    font-family: 'Chakra Petch', monospace;
+    letter-spacing: 0.02em;
+  }
+  .font-ui {
+    font-family: 'Chakra Petch', system-ui, sans-serif;
+  }
+
+  /* Decorative diagonal slash */
+  .slash-divider {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      hsl(var(--ink)) 0,
+      hsl(var(--ink)) 2px,
+      transparent 2px,
+      transparent 10px
+    );
+  }
+
+  .grid-paper {
+    background-image:
+      linear-gradient(hsl(var(--ink) / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--ink) / 0.06) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .noise {
+    position: relative;
+  }
+  .noise::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.06;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/></svg>");
+  }
+
+  .ticker {
+    animation: ticker 40s linear infinite;
+  }
+
+  .btn-brutal {
+    @apply inline-flex items-center justify-center gap-3 font-display uppercase tracking-wide;
+    font-size: 1.05rem;
+    padding: 1rem 1.75rem;
+    background: hsl(var(--orange));
+    color: hsl(var(--ink));
+    border: 2px solid hsl(var(--ink));
+    box-shadow: 6px 6px 0 0 hsl(var(--ink));
+    transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+  }
+  .btn-brutal:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0 0 hsl(var(--ink));
+    background: hsl(var(--orange-bright));
+  }
+  .btn-brutal:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 0 hsl(var(--ink));
+  }
+
+  .btn-outline-brutal {
+    @apply inline-flex items-center justify-center gap-3 font-display uppercase tracking-wide;
+    font-size: 1rem;
+    padding: 0.9rem 1.5rem;
+    background: transparent;
+    color: hsl(var(--ink));
+    border: 2px solid hsl(var(--ink));
+    transition: background 120ms ease, color 120ms ease;
+  }
+  .btn-outline-brutal:hover {
+    background: hsl(var(--ink));
+    color: hsl(var(--bone));
+  }
+
+  .card-brutal {
+    background: hsl(var(--bone));
+    border: 2px solid hsl(var(--ink));
+    box-shadow: 6px 6px 0 0 hsl(var(--ink));
+  }
+
+  .tag-chip {
+    @apply inline-flex items-center gap-2 font-mono-display uppercase text-xs tracking-widest;
+    padding: 0.35rem 0.65rem;
+    border: 1.5px solid hsl(var(--ink));
+    background: hsl(var(--bone));
+  }
+}
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes slice-in {
+  from { opacity: 0; transform: translateY(14px) skewY(-1deg); }
+  to { opacity: 1; transform: translateY(0) skewY(0); }
+}
+
+@keyframes marquee-slow {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}

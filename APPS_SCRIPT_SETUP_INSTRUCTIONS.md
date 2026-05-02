@@ -8,6 +8,7 @@ This document explains how to set up the automatic email notification system for
 - The form is located at: https://docs.google.com/forms/d/1tIES8Y_c-Fp957NolfjGFlnlwN67uKyyzPD_ONJNnj8/viewform
 - The tracking sheet is at: https://docs.google.com/spreadsheets/d/1SwJiDkuAVBlcTsCkliZUGUyiE65AOE_JaHdf7-aclLM/edit?resourcekey=&gid=241800929#gid=241800929
 - Notification emails go to `hoops@dscinternationalgroup.com`, with `jason.t.rivard@gmail.com` copied.
+- The live website has an in-page registration packet. It posts to the same Google Form `formResponse` endpoint, so submissions should land in the same response sheet as direct Google Form submissions.
 
 ## Setup Steps
 
@@ -58,9 +59,9 @@ This document explains how to set up the automatic email notification system for
 
 ### Step 6: Test the Setup
 
-1. Submit a test response through your Google Form:
-   - Go to the form's public view URL (not the edit URL)
-   - Fill out the form with test data
+1. Submit a test response through the website registration packet or the Google Form:
+   - Website packet: open the live site, use the registration packet, and submit test data
+   - Google Form: go to the form's public view URL (not the edit URL), fill out the form with test data
    - Submit the form
 2. Verify the email was sent:
    - Check the inbox for `hoops@dscinternationalgroup.com`
