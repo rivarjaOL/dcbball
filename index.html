@@ -172,52 +172,6 @@
         .arrow { font-size: 16px; transition: transform 0.15s; }
         .btn:hover .arrow { transform: translate(2px, -2px); }
 
-        /* ---- COUNTDOWN ---- */
-        .countdown-strip {
-            padding: 0 24px 80px;
-        }
-        .countdown-box {
-            max-width: 640px; margin: 0 auto;
-            border: 1px solid rgba(249,115,22,0.15);
-            border-radius: 12px; padding: 36px 28px; text-align: center;
-            background: rgba(249,115,22,0.03);
-            position: relative;
-        }
-        .countdown-box::before {
-            content: ''; position: absolute; top: -1px; left: 60px; right: 60px; height: 1px;
-            background: linear-gradient(90deg, transparent, var(--orange), transparent);
-        }
-        .cd-heading {
-            font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
-            color: var(--orange); margin-bottom: 4px;
-        }
-        .cd-sub {
-            font-size: 14px; color: var(--gray-5); margin-bottom: 24px;
-        }
-        .cd-grid {
-            display: flex; justify-content: center; gap: 4px; align-items: baseline;
-        }
-        .cd-unit { text-align: center; min-width: 72px; }
-        .cd-num {
-            font-family: var(--display); font-size: 52px; line-height: 1;
-            letter-spacing: 2px; color: var(--white);
-        }
-        .cd-label {
-            font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-            color: var(--gray-6); margin-top: 6px;
-        }
-        .cd-sep {
-            font-family: var(--display); font-size: 36px;
-            color: rgba(255,255,255,0.12); padding: 0 2px;
-        }
-        .cd-note {
-            margin-top: 20px; font-size: 13px; font-weight: 600; color: #34d399;
-        }
-        .cd-expired {
-            display: none; margin-top: 12px;
-            font-size: 13px; color: var(--gray-5);
-        }
-
         /* ---- EXPERIENCE ---- */
         .experience { padding: 80px 24px; }
         .exp-inner { max-width: 860px; margin: 0 auto; }
@@ -514,8 +468,6 @@
         }
 
         @media (max-width: 480px) {
-            .cd-num { font-size: 40px; }
-            .cd-unit { min-width: 56px; }
             .p-card { padding: 28px 24px; }
             .p-price { font-size: 40px; }
         }
@@ -560,37 +512,6 @@
             </div>
         </div>
     </header>
-
-    <!-- Countdown -->
-    <section class="countdown-strip" aria-label="Early bird countdown">
-        <div class="countdown-box">
-            <p class="cd-heading">Early Bird Deadline</p>
-            <p class="cd-sub">Register before May 1st and save $250</p>
-            <div class="cd-grid" id="countdown">
-                <div class="cd-unit">
-                    <div class="cd-num" id="cd-d">--</div>
-                    <div class="cd-label">Days</div>
-                </div>
-                <span class="cd-sep">:</span>
-                <div class="cd-unit">
-                    <div class="cd-num" id="cd-h">--</div>
-                    <div class="cd-label">Hours</div>
-                </div>
-                <span class="cd-sep">:</span>
-                <div class="cd-unit">
-                    <div class="cd-num" id="cd-m">--</div>
-                    <div class="cd-label">Min</div>
-                </div>
-                <span class="cd-sep">:</span>
-                <div class="cd-unit">
-                    <div class="cd-num" id="cd-s">--</div>
-                    <div class="cd-label">Sec</div>
-                </div>
-            </div>
-            <p class="cd-note" id="cdNote">Save $250 with early registration</p>
-            <p class="cd-expired" id="cdExpired">Early bird pricing has ended. Standard rate applies.</p>
-        </div>
-    </section>
 
     <!-- The Experience -->
     <section class="experience">
@@ -754,34 +675,6 @@
     </div>
 
     <script>
-        // Countdown
-        (function() {
-            var deadline = new Date('2026-05-01T00:00:00-04:00');
-            var d = document.getElementById('cd-d');
-            var h = document.getElementById('cd-h');
-            var m = document.getElementById('cd-m');
-            var s = document.getElementById('cd-s');
-            var note = document.getElementById('cdNote');
-            var expired = document.getElementById('cdExpired');
-
-            function tick() {
-                var diff = deadline - new Date();
-                if (diff <= 0) {
-                    d.textContent = '0'; h.textContent = '0';
-                    m.textContent = '0'; s.textContent = '0';
-                    note.style.display = 'none';
-                    expired.style.display = 'block';
-                    return;
-                }
-                d.textContent = String(Math.floor(diff / 864e5)).padStart(2,'0');
-                h.textContent = String(Math.floor((diff % 864e5) / 36e5)).padStart(2,'0');
-                m.textContent = String(Math.floor((diff % 36e5) / 6e4)).padStart(2,'0');
-                s.textContent = String(Math.floor((diff % 6e4) / 1e3)).padStart(2,'0');
-            }
-            tick();
-            setInterval(tick, 1000);
-        })();
-
         // Mobile nav
         var toggle = document.getElementById('navToggle');
         var navRight = document.getElementById('navRight');
