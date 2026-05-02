@@ -13,18 +13,18 @@ const CONTACT_EMAIL = "hoops@dscinternationalgroup.com";
 const signupSteps = [
   {
     n: "01",
-    title: "Pick the summer track",
-    body: "Choose the full 9-week Warrior program or a weekly registration option before you start the packet.",
+    title: "Pick your summer track",
+    body: "Full 9 weeks or week-by-week — whichever fits your family's plans. You can switch before you submit.",
   },
   {
     n: "02",
-    title: "Complete one packet",
-    body: "Move section by section through athlete, family, program, and waiver details without leaving the page.",
+    title: "Have your athlete's info handy",
+    body: "Basics like grade, age, weight and height, and shirt size, plus a parent contact and one emergency contact. About ten minutes per athlete.",
   },
   {
     n: "03",
-    title: "Review and submit",
-    body: "Check every answer, make edits in place, then send the packet directly to DSC Hoops registration.",
+    title: "Submit and we'll be in touch",
+    body: "After you submit, DSC Hoops follows up to confirm your athlete's spot and walk you through the Executive Health Club membership before June 16.",
   },
 ];
 
@@ -89,7 +89,7 @@ const finePrint = [
   {
     label: "Calendar",
     title: "Guest details coming",
-    body: "The weekly guest and programming calendar will be shared as June approaches. The registration packet locks the athlete's spot now.",
+    body: "The weekly guest and programming calendar will be shared as June approaches. Registering now locks your athlete's spot.",
   },
 ];
 
@@ -163,7 +163,7 @@ const Summer = () => {
               •
             </span>
             <span className="truncate">
-              Summer 2026 registration is open - standard rate now applies
+              Summer 2026 · Doors open · 9 weeks of Warrior training · $4,000
             </span>
           </div>
           <a
@@ -171,7 +171,7 @@ const Summer = () => {
             onClick={jumpToRegistration(primaryPackage)}
             className="hidden shrink-0 border-l-2 border-ink pl-3 hover:opacity-70 sm:inline"
           >
-            Start packet
+            Start registration
           </a>
         </div>
       </div>
@@ -366,15 +366,16 @@ const Summer = () => {
         <div className="container py-10 md:py-14">
           <div className="grid items-center gap-8 md:grid-cols-12">
             <div className="md:col-span-7">
-              <SectionLabel index="00" label="Rate Update" />
+              <SectionLabel index="00" label="Now Booking" />
               <h2 className="mt-4 font-display text-4xl uppercase leading-[0.95] md:text-5xl">
-                Standard rate
+                Doors still open.
                 <br />
-                <span className="text-orange">now in effect.</span>
+                <span className="text-orange">Full program, full send.</span>
               </h2>
               <p className="mt-4 max-w-2xl font-ui text-ink/80">
-                Registration remains open for the full 9-week program at
-                $4,000, with weekly registration still available.
+                Early bird's closed. The work isn't. Lock in nine weeks of
+                5 AM Warrior training at $4,000 — or grab weekly registration
+                if the full summer isn't on the table.
               </p>
             </div>
             <div className="md:col-span-5">
@@ -400,13 +401,13 @@ const Summer = () => {
               <h2 className="mt-4 font-display text-5xl uppercase leading-[0.9] md:text-7xl">
                 Three moves.
                 <br />
-                One <span className="text-orange">packet.</span>
+                <span className="text-orange">Spot reserved.</span>
               </h2>
             </div>
             <div className="col-span-12 md:col-span-4 md:text-right">
               <p className="font-ui text-ink/70">
-                The registration flow is built for parents: choose, fill, review,
-                submit.
+                Here's what to expect when you register your athlete, and what
+                we'll need from you to lock the spot in.
               </p>
             </div>
           </div>
@@ -440,7 +441,7 @@ const Summer = () => {
               onClick={jumpToRegistration(primaryPackage)}
               className="btn-brutal"
             >
-              Start the Packet →
+              Start Registration →
             </a>
             <a href="#pricing" className="btn-outline-brutal">
               Compare Packages
@@ -515,7 +516,7 @@ const Summer = () => {
             <div className="col-span-12 md:col-span-4 md:text-right">
               <p className="font-ui text-ink/70">
                 Three focused training mornings every week at Executive Health
-                Club, with the registration packet on this page.
+                Club. Register your athlete right here on this page.
               </p>
             </div>
           </div>
@@ -626,7 +627,7 @@ const Summer = () => {
                   {[
                     "Full 9-week Workhouse Warrior program",
                     "Tue / Wed / Thu, 5 AM - 9 AM",
-                    "One registration packet, reviewed before submit",
+                    "Register one athlete at a time, review before you submit",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-3">
                       <span className="mt-2 h-1.5 w-1.5 shrink-0 bg-orange" />
@@ -750,8 +751,8 @@ const Summer = () => {
             <span className="text-orange">everything.</span>
           </h2>
           <p className="mx-auto mt-6 max-w-2xl font-ui text-lg text-bone/80 md:text-xl">
-            The packet is on this page. The schedule is summer only. The next
-            move is registering the athlete who is ready for the work.
+            Registration is right here on this page. The schedule is summer
+            only. Sign up the athlete who's ready for the work.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <a

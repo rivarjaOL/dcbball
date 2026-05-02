@@ -106,8 +106,8 @@ const PACKAGE_OPTIONS: Array<{
     id: "standard",
     label: "Standard Full Program",
     price: "$4,000",
-    kicker: "Standard rate",
-    detail: "Full Warrior program at the standard summer rate.",
+    kicker: "All in",
+    detail: "Every session, every week. The full nine-week Warrior build.",
     googleValue:
       "WARRIOR Program (Ages 13 & Up) from 5 am to 9 am runs 6/8 to 8/14 (3 months).... After May 1st Total $4,000",
   },
@@ -704,12 +704,13 @@ const RegistrationPacket = ({
               Registration sent
             </div>
             <h2 className="mt-4 font-display text-5xl uppercase leading-[0.9] md:text-7xl">
-              Packet received.
+              Registration received.
             </h2>
             <p className="mt-6 max-w-2xl font-ui text-lg leading-relaxed text-ink/80">
-              Your Workhouse Warrior Summer registration has been submitted.
-              DSC Hoops will follow up with next steps using the contact details
-              in this packet.
+              Your athlete is in the system. DSC Hoops will reach out to confirm
+              the spot and walk you through the Executive Health Club membership
+              before sessions start June 16. Watch the email and phone number
+              you provided.
             </p>
             <button
               type="button"
@@ -735,7 +736,7 @@ const RegistrationPacket = ({
         <div className="flex items-center gap-3 font-mono-display text-xs uppercase tracking-[0.25em] text-ink/70">
           <span className="text-orange">[05]</span>
           <span className="h-px w-10 bg-ink/30" />
-          <span>Registration Packet</span>
+          <span>Registration</span>
         </div>
 
         <div className="mt-4 grid gap-6 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-end">
@@ -746,8 +747,9 @@ const RegistrationPacket = ({
             </h2>
           </div>
           <p className="max-w-xl font-ui text-lg leading-relaxed text-ink/80 lg:justify-self-end">
-            Complete one registration packet per athlete. Move through each
-            section, review every answer, and submit when your family is ready.
+            Register one athlete at a time. Work through each section, review
+            every answer, and submit when your family is ready. Your progress is
+            saved if you need to step away.
           </p>
         </div>
 
@@ -1014,14 +1016,14 @@ const RegistrationPacket = ({
                       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div>
                           <div className="font-mono-display text-[10px] uppercase tracking-[0.25em] text-ink/65">
-                            Rate update
+                            Now booking
                           </div>
                           <div className="mt-1 font-display text-3xl uppercase leading-none text-ink">
-                            Standard rate in effect
+                            Locked in at $4,000
                           </div>
                           <p className="mt-2 font-ui text-sm text-ink/75">
-                            Choose the $4,000 full program or weekly
-                            registration below.
+                            Nine weeks. Twenty-seven sessions. Lock in the full
+                            program, or take it weekly below.
                           </p>
                         </div>
                         <div className="border-2 border-ink bg-bone px-4 py-3 text-center">
@@ -1149,8 +1151,8 @@ const RegistrationPacket = ({
                         Ready to submit.
                       </div>
                       <p className="mt-2 font-ui text-sm text-ink/75">
-                        Review the packet below. When it looks right, send it to
-                        DSC Hoops registration.
+                        Look over every answer below. When it's right, send it
+                        to DSC Hoops.
                       </p>
                     </div>
                   )}
