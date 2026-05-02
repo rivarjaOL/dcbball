@@ -326,7 +326,11 @@ function buildGooglePayload(form: RegistrationFormState) {
   body.set("entry.500454811", form.siblingDiscountName.trim());
   body.set("entry.367574461", form.digitalSignature.trim());
   appendGoogleDate(body, "1071552387", form.dateSigned);
-  body.set("pageHistory", "0");
+  // The summer Google Form is 5 pages (email + 4 section breaks). pageHistory
+  // must list every page traversed, comma-separated, or Google silently drops
+  // every entry on pages we didn't claim to visit. If the form gains/loses a
+  // page break, update this and re-verify against the responses sheet.
+  body.set("pageHistory", "0,1,2,3,4");
   body.set("fvv", "1");
   body.set("submit", "Submit");
 
