@@ -355,18 +355,6 @@ const Summer = () => {
                   </div>
                 </div>
               </div>
-
-              <div className="card-brutal absolute -bottom-6 -left-8 hidden max-w-[235px] p-4 lg:block">
-                <div className="font-mono-display text-[10px] uppercase tracking-widest text-ink/60">
-                  Current packet
-                </div>
-                <div className="mt-1 font-display text-2xl uppercase leading-none">
-                  Workhouse Warrior
-                </div>
-                <div className="mt-2 font-ui text-sm text-ink/70">
-                  One in-page packet. Review, edit, and submit when ready.
-                </div>
-              </div>
             </div>
           </div>
         </div>
