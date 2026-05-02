@@ -6,7 +6,7 @@ This document explains how to set up the automatic email notification system for
 
 - Access to the Google Sheet that receives form responses from the registration form
 - The form is located at: https://docs.google.com/forms/d/1tIES8Y_c-Fp957NolfjGFlnlwN67uKyyzPD_ONJNnj8/viewform
-- The tracking sheet is at: https://docs.google.com/spreadsheets/d/1SwJiDkuAVBlcTsCkliZUGUyiE65AOE_JaHdf7-aclLM/edit?resourcekey=&gid=241800929#gid=241800929
+- The tracking sheet is at: https://docs.google.com/spreadsheets/d/1-_MBTiupAFNOcXvkDpn_FfNhiqAwZoNqULoPw4QFu5o/edit?resourcekey=&gid=453007637#gid=453007637
 - Notification emails go to `hoops@dscinternationalgroup.com`, with `jason.t.rivard@gmail.com` copied.
 - The live website has an in-page registration packet. It posts to the same Google Form `formResponse` endpoint, so submissions should land in the same response sheet as direct Google Form submissions.
 

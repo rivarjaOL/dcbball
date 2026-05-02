@@ -132,7 +132,7 @@ Important URLs:
 
 - **Summer Google Form public URL:** `https://docs.google.com/forms/d/1tIES8Y_c-Fp957NolfjGFlnlwN67uKyyzPD_ONJNnj8/viewform`
 - **Summer Google Form endpoint used by the React intake:** `https://docs.google.com/forms/d/e/1FAIpQLScf7b9ChwsWEaoNOaeRpKzCMW6LctFmk-TXeEe1Z5McnMx2iQ/formResponse`
-- **Responses sheet:** `https://docs.google.com/spreadsheets/d/1SwJiDkuAVBlcTsCkliZUGUyiE65AOE_JaHdf7-aclLM/`
+- **Responses sheet:** `https://docs.google.com/spreadsheets/d/1-_MBTiupAFNOcXvkDpn_FfNhiqAwZoNqULoPw4QFu5o/`
 - **Notification emails:** `hoops@dscinternationalgroup.com` (to), `jason.t.rivard@gmail.com` (cc)
 
 The site does **not** write directly to Google Sheets. It submits to the same Google Form that writes to the Sheet. This is what allows the same Apps Script spreadsheet trigger to fire.

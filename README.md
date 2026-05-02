@@ -67,7 +67,7 @@ Main code path:
 - Payload builder: `buildGooglePayload()`
 - Google Form endpoint: `https://docs.google.com/forms/d/e/1FAIpQLScf7b9ChwsWEaoNOaeRpKzCMW6LctFmk-TXeEe1Z5McnMx2iQ/formResponse`
 - Public Google Form: `https://docs.google.com/forms/d/1tIES8Y_c-Fp957NolfjGFlnlwN67uKyyzPD_ONJNnj8/viewform`
-- Response Sheet: `https://docs.google.com/spreadsheets/d/1SwJiDkuAVBlcTsCkliZUGUyiE65AOE_JaHdf7-aclLM/`
+- Response Sheet: `https://docs.google.com/spreadsheets/d/1-_MBTiupAFNOcXvkDpn_FfNhiqAwZoNqULoPw4QFu5o/`
 
 The frontend does not write directly to Google Sheets. It posts to Google Forms so the same response Sheet and Apps Script trigger are used.
 

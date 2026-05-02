@@ -13,6 +13,10 @@
   - Added the in-page registration packet that mirrors the Google Form fields and posts to the same Google Form response endpoint
   - Updated GitHub Pages deployment to build the Vite app before publishing
 
+- **Registration Submit Fix:**
+  - Changed the registration packet submit path from browser `fetch` to a native hidden form POST so all Google Form fields write to the response sheet
+  - Updated documentation and notification script references to the current Summer Workhouse Warrior response sheet
+
 ## November 2025
 
 ### November 29, 2025

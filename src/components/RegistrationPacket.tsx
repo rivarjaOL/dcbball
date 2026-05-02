@@ -60,6 +60,7 @@ type RegistrationPacketProps = {
 const GOOGLE_FORM_ENDPOINT =
   "https://docs.google.com/forms/d/e/1FAIpQLScf7b9ChwsWEaoNOaeRpKzCMW6LctFmk-TXeEe1Z5McnMx2iQ/formResponse";
 
+const GOOGLE_IFRAME_NAME = "workhouse-google-form-target";
 const STORAGE_KEY = "workhouse-summer-registration-draft";
 
 const SHIRT_SIZES = ["Adult XS", "Adult S", "Adult M", "Adult L", "Adult XL"];
@@ -544,6 +545,7 @@ const RegistrationPacket = ({
     "idle" | "submitting" | "submitted" | "error"
   >("idle");
   const submittingRef = useRef(false);
+  const submitTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!selectedPackage) return;
@@ -557,6 +559,15 @@ const RegistrationPacket = ({
     if (typeof window === "undefined" || submitState === "submitted") return;
     window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(form));
   }, [form, submitState]);
+
+  useEffect(
+    () => () => {
+      if (submitTimeoutRef.current !== null) {
+        window.clearTimeout(submitTimeoutRef.current);
+      }
+    },
+    [],
+  );
 
   const visiblePackageOptions = useMemo(
     () => PACKAGE_OPTIONS.filter((option) => option.id !== "early"),
@@ -621,10 +632,31 @@ const RegistrationPacket = ({
     if (previousStep) goToStep(previousStep.id);
   };
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
+  const googlePayload = useMemo(
+    () => Array.from(buildGooglePayload(form).entries()),
+    [form],
+  );
 
+  const completeSubmission = () => {
+    if (!submittingRef.current) return;
+
+    if (submitTimeoutRef.current !== null) {
+      window.clearTimeout(submitTimeoutRef.current);
+      submitTimeoutRef.current = null;
+    }
+
+    if (typeof window !== "undefined") {
+      window.sessionStorage.removeItem(STORAGE_KEY);
+    }
+
+    submittingRef.current = false;
+    setSubmitState("submitted");
+    setActiveStep("review");
+  };
+
+  const handleSubmit = (event: FormEvent) => {
     if (activeStep !== "review") {
+      event.preventDefault();
       goNext();
       return;
     }
@@ -634,6 +666,7 @@ const RegistrationPacket = ({
       submitState === "submitting" ||
       submitState === "submitted"
     ) {
+      event.preventDefault();
       return;
     }
 
@@ -641,6 +674,7 @@ const RegistrationPacket = ({
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
+      event.preventDefault();
       const firstInvalid = STEPS.find(
         (step) =>
           step.id !== "review" &&
@@ -654,21 +688,7 @@ const RegistrationPacket = ({
     setSubmitState("submitting");
     submittingRef.current = true;
 
-    try {
-      await fetch(GOOGLE_FORM_ENDPOINT, {
-        method: "POST",
-        mode: "no-cors",
-        body: buildGooglePayload(form),
-      });
-      if (typeof window !== "undefined") {
-        window.sessionStorage.removeItem(STORAGE_KEY);
-      }
-      setSubmitState("submitted");
-      setActiveStep("review");
-    } catch {
-      submittingRef.current = false;
-      setSubmitState("error");
-    }
+    submitTimeoutRef.current = window.setTimeout(completeSubmission, 6000);
   };
 
   if (submitState === "submitted") {
@@ -727,10 +747,24 @@ const RegistrationPacket = ({
           </p>
         </div>
 
+        <iframe
+          className="hidden"
+          name={GOOGLE_IFRAME_NAME}
+          title="Google Form submission target"
+          onLoad={completeSubmission}
+        />
+
         <form
+          action={GOOGLE_FORM_ENDPOINT}
+          method="POST"
+          target={GOOGLE_IFRAME_NAME}
           onSubmit={handleSubmit}
           className="mt-12 grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)]"
         >
+          {googlePayload.map(([name, value]) => (
+            <input key={name} type="hidden" name={name} value={value} readOnly />
+          ))}
+
           <aside className="min-w-0 lg:sticky lg:top-28 lg:self-start">
             <div className="border-2 border-ink bg-bone">
               {STEPS.map((step, index) => {
@@ -787,7 +821,7 @@ const RegistrationPacket = ({
 
             <div className="mt-5 border-2 border-ink bg-ink p-5 text-bone">
               <div className="font-mono-display text-[10px] uppercase tracking-[0.25em] text-bone/60">
-                Current packet
+                Selected program
               </div>
               <div className="mt-3 font-display text-3xl uppercase leading-none">
                 {form.athleteName || "New athlete"}
