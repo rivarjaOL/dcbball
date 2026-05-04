@@ -77,20 +77,20 @@ const MEMBERSHIP_OPTIONS = [
   {
     value: "YES, HAVE A CURRENT MEMBERSHIP",
     label: "Current member",
-    detail: "The athlete already has an active family Executive Health Club membership.",
+    detail:
+      "The athlete must already have an active Executive Health Club membership, or choose the Summer Membership below. Individual or family memberships both qualify.",
   },
   {
     value: "NO, BUT WILL GET A 3 MONTH MEMBERSHIP FOR THE SUMMER PROGRAM",
     label: "Need summer membership",
-    detail: "You will set up the 3-month summer membership before sessions begin.",
-  },
-  {
-    value:
-      "DO NOT WANT A MEMBERSHIP, BUT WILL PAY THE ADDED WEEKLY FEE $40 (FOR WEEKLY REGISTRATIONS)",
-    label: "Weekly fee instead",
-    detail: "For weekly registrations only, add the $40 weekly facility fee.",
+    detail:
+      "You will set up the 3-month summer membership before sessions begin. Cost is $255, paid directly to Executive Health Club.",
   },
 ];
+
+const MEMBERSHIP_VALUES = new Set(
+  MEMBERSHIP_OPTIONS.map((option) => option.value),
+);
 
 const FACILITY_LOCATION = "Manchester Facility: Executive Health and Sports Club";
 
@@ -116,7 +116,7 @@ const PACKAGE_OPTIONS: Array<{
     label: "Weekly Registration",
     price: "$550 / week",
     kicker: "Flexible",
-    detail: "Individual week registration. Facility surcharge may apply.",
+    detail: "Individual week registration for families who need flexible dates.",
     googleValue:
       "WARRIOR Program (Ages 13 & Up) from 5 am to 9 am  (weekly cost) $550",
   },
@@ -191,6 +191,10 @@ function loadDraft(): RegistrationFormState {
     return {
       ...initialFormState(),
       ...parsed,
+      membershipStatus:
+        parsed.membershipStatus && MEMBERSHIP_VALUES.has(parsed.membershipStatus)
+          ? parsed.membershipStatus
+          : "",
       packageChoice:
         parsed.packageChoice === "early" ? "standard" : parsed.packageChoice ?? "standard",
     };
@@ -256,6 +260,7 @@ function validateStep(step: StepId, form: RegistrationFormState): FieldErrors {
     addRequired(errors, form, "skillLevel", "Skill level");
     addRequired(errors, form, "heardFrom", "How you heard about us");
     addRequired(errors, form, "membershipStatus", "Membership status");
+    addRequired(errors, form, "packageChoice", "Package choice");
     addRequired(errors, form, "facilityLocation", "Facility location");
   }
 
@@ -357,7 +362,7 @@ function countStepAnswers(step: StepId, form: RegistrationFormState) {
       "emergencyName",
       "emergencyPhone",
     ],
-    program: ["skillLevel", "heardFrom", "membershipStatus", "facilityLocation"],
+    program: ["skillLevel", "heardFrom", "membershipStatus", "packageChoice"],
     waiver: ["digitalSignature", "dateSigned"],
     review: [],
   };
@@ -380,16 +385,25 @@ const fieldBase =
 function FieldShell({
   label,
   error,
+  required = true,
   children,
 }: {
   label: string;
   error?: string;
+  required?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <label className="block min-w-0">
-      <span className="mb-2 block font-mono-display text-[11px] uppercase tracking-[0.22em] text-ink/70">
-        {label}
+      <span className="mb-2 flex items-center justify-between gap-3 font-mono-display text-[11px] uppercase tracking-[0.22em] text-ink/70">
+        <span>{label}</span>
+        <span
+          className={`shrink-0 tracking-[0.16em] ${
+            required ? "text-orange" : "text-ink/45"
+          }`}
+        >
+          {required ? "Required" : "Optional"}
+        </span>
       </span>
       {children}
       {error && (
@@ -408,6 +422,7 @@ function TextField({
   type = "text",
   placeholder,
   inputMode,
+  required = true,
   onChange,
 }: {
   label: string;
@@ -416,13 +431,16 @@ function TextField({
   type?: string;
   placeholder?: string;
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  required?: boolean;
   onChange: (value: string) => void;
 }) {
   return (
-    <FieldShell label={label} error={error}>
+    <FieldShell label={label} error={error} required={required}>
       <input
         type={type}
         value={value}
+        required={required}
+        aria-required={required}
         inputMode={inputMode}
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
@@ -438,6 +456,7 @@ function SelectField({
   error,
   placeholder,
   options,
+  required = true,
   onChange,
 }: {
   label: string;
@@ -445,12 +464,15 @@ function SelectField({
   error?: string;
   placeholder: string;
   options: string[];
+  required?: boolean;
   onChange: (value: string) => void;
 }) {
   return (
-    <FieldShell label={label} error={error}>
+    <FieldShell label={label} error={error} required={required}>
       <select
         value={value}
+        required={required}
+        aria-required={required}
         onChange={(event) => onChange(event.target.value)}
         className={`${fieldBase} appearance-none ${error ? "border-orange" : ""}`}
       >
@@ -471,7 +493,13 @@ function ChoiceGrid({
   error,
   onChange,
 }: {
-  options: Array<{ value: string; label: string; detail?: string; price?: string }>;
+  options: Array<{
+    value: string;
+    label: string;
+    detail?: string;
+    price?: string;
+    eyebrow?: string;
+  }>;
   value: string;
   error?: string;
   onChange: (value: string) => void;
@@ -495,6 +523,11 @@ function ChoiceGrid({
             >
               <span className="flex items-start justify-between gap-4">
                 <span>
+                  {option.eyebrow && (
+                    <span className="mb-2 block font-mono-display text-[10px] uppercase tracking-[0.22em] opacity-65">
+                      {option.eyebrow}
+                    </span>
+                  )}
                   <span className="block font-display text-2xl uppercase leading-none">
                     {option.label}
                   </span>
@@ -504,9 +537,19 @@ function ChoiceGrid({
                     </span>
                   )}
                 </span>
-                {option.price && (
-                  <span className="font-display text-2xl leading-none">
-                    {option.price}
+                {(option.price || selected) && (
+                  <span className="flex shrink-0 flex-col items-end gap-2">
+                    {selected && (
+                      <span className="inline-flex items-center gap-1 border-2 border-ink bg-ink px-2 py-1 font-mono-display text-[9px] uppercase tracking-[0.16em] text-bone">
+                        <Check className="h-3 w-3" />
+                        Selected
+                      </span>
+                    )}
+                    {option.price && (
+                      <span className="font-display text-2xl leading-none">
+                        {option.price}
+                      </span>
+                    )}
                   </span>
                 )}
               </span>
@@ -997,8 +1040,11 @@ const RegistrationPacket = ({
                   </div>
 
                   <div>
-                    <div className="mb-3 font-mono-display text-[11px] uppercase tracking-[0.22em] text-ink/70">
-                      Executive Health Club Membership
+                    <div className="mb-3 flex items-center justify-between gap-3 font-mono-display text-[11px] uppercase tracking-[0.22em] text-ink/70">
+                      <span>Executive Health Club Membership</span>
+                      <span className="shrink-0 tracking-[0.16em] text-orange">
+                        Required
+                      </span>
                     </div>
                     <ChoiceGrid
                       value={form.membershipStatus}
@@ -1009,43 +1055,34 @@ const RegistrationPacket = ({
                   </div>
 
                   <div>
-                    <div className="mb-3 font-mono-display text-[11px] uppercase tracking-[0.22em] text-ink/70">
-                      Summer Package
+                    <div className="mb-3 flex items-center justify-between gap-3 font-mono-display text-[11px] uppercase tracking-[0.22em] text-ink/70">
+                      <span>Summer Package</span>
+                      <span className="shrink-0 tracking-[0.16em] text-orange">
+                        Required
+                      </span>
                     </div>
-                    <div className="mb-4 border-2 border-ink bg-orange p-4 shadow-[5px_5px_0_0_hsl(var(--ink))]">
-                      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                        <div>
-                          <div className="font-mono-display text-[10px] uppercase tracking-[0.25em] text-ink/65">
-                            Now booking
-                          </div>
-                          <div className="mt-1 font-display text-3xl uppercase leading-none text-ink">
-                            Locked in at $4,000
-                          </div>
-                          <p className="mt-2 font-ui text-sm text-ink/75">
-                            Nine weeks. Twenty-seven sessions. Lock in the full
-                            program, or take it weekly below.
-                          </p>
-                        </div>
-                        <div className="border-2 border-ink bg-bone px-4 py-3 text-center">
-                          <div className="font-display text-4xl leading-none text-ink">
-                            $4,000
-                          </div>
-                          <div className="mt-1 font-mono-display text-[9px] uppercase tracking-[0.18em] text-ink/55">
-                            Full Program
-                          </div>
-                        </div>
+                    <div className="mb-4 border-2 border-ink bg-bone p-4">
+                      <div className="font-display text-3xl uppercase leading-none text-ink">
+                        Choose full program or weekly.
                       </div>
+                      <p className="mt-2 font-ui text-sm text-ink/75">
+                        Lock in the full Workhouse summer, or reserve the
+                        individual weeks that fit your family's calendar. Your
+                        selection is highlighted before you continue.
+                      </p>
                     </div>
                     <ChoiceGrid
                       value={form.packageChoice}
                       onChange={(value) =>
                         updateField("packageChoice", value as ProgramPackageId)
                       }
-                      options={visiblePackageOptions.map((option) => ({
+                      options={visiblePackageOptions.map((option, index) => ({
                         value: option.id,
                         label: option.label,
                         detail: `${option.kicker} - ${option.detail}`,
                         price: option.price,
+                        eyebrow:
+                          index === 0 ? "Full summer track" : "Weekly track",
                       }))}
                     />
                   </div>
@@ -1111,6 +1148,7 @@ const RegistrationPacket = ({
                     label="Family 10% Sibling Discount"
                     value={form.siblingDiscountName}
                     placeholder="Optional referring sibling name"
+                    required={false}
                     onChange={(value) => updateField("siblingDiscountName", value)}
                   />
 

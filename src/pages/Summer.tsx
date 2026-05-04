@@ -50,21 +50,21 @@ const programPillars = [
 const scheduleDays = [
   {
     day: "Tuesday",
-    title: "Skill Build",
+    title: "Skill Build / Game IQ / Compete",
     time: "5:00 AM - 9:00 AM",
-    body: "Skill development, footwork, shot prep, conditioning, and competitive reps to set the week's standard.",
+    body: "Every training morning follows the same routine: skill build, game IQ, and compete before athletes leave the gym.",
   },
   {
     day: "Wednesday",
-    title: "Game IQ",
+    title: "Skill Build / Game IQ / Compete",
     time: "5:00 AM - 9:00 AM",
-    body: "Decision-making, reads, pace, player development blocks, and guest-led work when scheduled.",
+    body: "Every training morning follows the same routine: skill build, game IQ, and compete before athletes leave the gym.",
   },
   {
     day: "Thursday",
-    title: "Compete",
+    title: "Skill Build / Game IQ / Compete",
     time: "5:00 AM - 9:00 AM",
-    body: "Applied skill, situational work, competitive play, and weekly accountability before athletes leave the gym.",
+    body: "Every training morning follows the same routine: skill build, game IQ, and compete before athletes leave the gym.",
   },
 ];
 
@@ -79,12 +79,7 @@ const finePrint = [
   {
     label: "Membership",
     title: "EHC membership required",
-    body: "Participants must have a current Executive Health Club membership, handled at the membership office. Cost is $255.",
-  },
-  {
-    label: "Weekly surcharge",
-    title: "Drop-in adds $40/wk",
-    body: "Weekly registrations carry a $40 facility surcharge on top of the weekly rate when a summer membership is not selected.",
+    body: "Participants must have a current Executive Health Club membership before sessions begin. Athlete membership can be individual or family. New summer memberships cost $255 and are paid directly to Executive Health Club.",
   },
   {
     label: "Calendar",
@@ -679,7 +674,8 @@ const Summer = () => {
                       Individual weeks
                     </h3>
                     <p className="mt-3 max-w-md font-ui text-ink/70">
-                      Flexible weekly registration. Facility surcharge may apply.
+                      Flexible weekly registration for families who need
+                      individual weeks.
                     </p>
                   </div>
                   <div>
@@ -709,7 +705,7 @@ const Summer = () => {
             Read the <span className="text-orange">fine print.</span>
           </h2>
 
-          <div className="mt-12 grid border-2 border-ink md:grid-cols-3">
+          <div className="mt-12 grid border-2 border-ink md:grid-cols-2">
             {finePrint.map((item, index) => (
               <div
                 key={item.label}
