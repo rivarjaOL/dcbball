@@ -389,6 +389,22 @@ function validateStep(
     if (form.athleteAge && Number(form.athleteAge) < 5) {
       errors.athleteAge = "Athlete must be at least 5 years old.";
     }
+    // Catch obviously invalid DOBs (e.g. typo years like 1111) before submit.
+    // Google Forms silently rejects out-of-range dates and the iframe-target
+    // POST has no way to surface that failure back to the user, so we have
+    // to enforce a sane window client-side.
+    if (form.athleteDob) {
+      const dob = new Date(form.athleteDob);
+      const now = new Date();
+      const minYear = now.getFullYear() - 100;
+      if (
+        Number.isNaN(dob.getTime()) ||
+        dob > now ||
+        dob.getFullYear() < minYear
+      ) {
+        errors.athleteDob = "Enter a valid date of birth.";
+      }
+    }
   }
 
   if (step === "parent") {
