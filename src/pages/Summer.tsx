@@ -1,11 +1,14 @@
-import { type MouseEvent, useState } from "react";
+import { type MouseEvent, useEffect, useState } from "react";
 import courtEmpty from "@/assets/court-empty.jpg";
 import handsBall from "@/assets/hands-ball.jpg";
 import heroPlayer from "@/assets/hero-player.jpg";
 import summerHero from "@/assets/summer-hero.jpg";
 import workhouseLogo from "@/assets/workhouse-logo.png";
 import RegistrationPacket, {
+  SPRING_PACKAGE_OPTIONS,
   type ProgramPackageId,
+  type SessionMode,
+  type SpringPackageId,
 } from "@/components/RegistrationPacket";
 
 const CONTACT_EMAIL = "hoops@dscinternationalgroup.com";
@@ -124,17 +127,45 @@ const SectionLabel = ({
   </div>
 );
 
+function readInitialSessionMode(): SessionMode {
+  if (typeof window === "undefined") return "summer";
+  const param = new URLSearchParams(window.location.search).get("session");
+  return param === "spring" ? "spring" : "summer";
+}
+
 const Summer = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [sessionMode, setSessionMode] = useState<SessionMode>(() =>
+    readInitialSessionMode(),
+  );
   const [registrationIntent, setRegistrationIntent] = useState<{
     packageId?: ProgramPackageId;
+    springPackageId?: SpringPackageId;
     key: number;
   }>({ key: 0 });
+
+  // Keep ?session=... in sync with the toggle so the choice survives a refresh
+  // and the URL is shareable. We replace rather than push so spring/summer
+  // toggling doesn't pollute the back-button history.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    if (sessionMode === "spring") {
+      url.searchParams.set("session", "spring");
+    } else {
+      url.searchParams.delete("session");
+    }
+    const next = `${url.pathname}${url.search}${url.hash}`;
+    if (next !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
+      window.history.replaceState(null, "", next);
+    }
+  }, [sessionMode]);
 
   const jumpToRegistration =
     (packageId?: ProgramPackageId) => (event: MouseEvent<HTMLAnchorElement>) => {
       event.preventDefault();
       setMenuOpen(false);
+      setSessionMode("summer");
       setRegistrationIntent((current) => ({
         packageId,
         key: current.key + 1,
@@ -147,7 +178,29 @@ const Summer = () => {
       });
     };
 
+  const jumpToSpringRegistration =
+    (springPackageId?: SpringPackageId) =>
+    (event: MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
+      event.preventDefault();
+      setMenuOpen(false);
+      setSessionMode("spring");
+      setRegistrationIntent((current) => ({
+        springPackageId,
+        key: current.key + 1,
+      }));
+
+      document.getElementById("register")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    };
+
   const primaryPackage: ProgramPackageId = "standard";
+
+  const springPackagesByGroup = {
+    small: SPRING_PACKAGE_OPTIONS.filter((option) => option.group === "small"),
+    group: SPRING_PACKAGE_OPTIONS.filter((option) => option.group === "group"),
+  };
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-bone text-ink selection:bg-orange">
@@ -197,6 +250,9 @@ const Summer = () => {
             <a href="#pricing" className="transition-colors hover:text-orange">
               Pricing
             </a>
+            <a href="#spring" className="transition-colors hover:text-orange">
+              Spring
+            </a>
             <a href="#register" className="transition-colors hover:text-orange">
               Register
             </a>
@@ -236,6 +292,9 @@ const Summer = () => {
               </a>
               <a href="#pricing" onClick={() => setMenuOpen(false)}>
                 Pricing
+              </a>
+              <a href="#spring" onClick={() => setMenuOpen(false)}>
+                Spring Sessions
               </a>
               <a
                 href="#register"
@@ -698,9 +757,135 @@ const Summer = () => {
         </div>
       </section>
 
+      <section id="spring" className="border-b-2 border-ink bg-bone">
+        <div className="container py-16 md:py-24">
+          <div className="mb-12 grid grid-cols-12 items-end gap-6">
+            <div className="col-span-12 md:col-span-8">
+              <SectionLabel index="05" label="Spring Sessions" />
+              <h2 className="mt-4 font-display text-5xl uppercase leading-[0.9] md:text-7xl">
+                Spring is still
+                <br />
+                <span className="text-orange">on the floor.</span>
+              </h2>
+            </div>
+            <div className="col-span-12 md:col-span-4 md:text-right">
+              <p className="font-ui text-ink/70">
+                Want to start now instead of waiting for summer? Spring sessions
+                are still running at Executive Health Club. Pick a Small Group or
+                Group package and DSC Hoops will reach out to schedule.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="border-2 border-ink bg-bone p-6 md:p-8">
+              <div className="flex items-baseline justify-between gap-4">
+                <div>
+                  <div className="font-mono-display text-[10px] uppercase tracking-[0.25em] text-orange">
+                    Small Group
+                  </div>
+                  <h3 className="mt-3 font-display text-4xl uppercase leading-none md:text-5xl">
+                    2-4 players
+                  </h3>
+                </div>
+                <div className="font-mono-display text-[10px] uppercase tracking-[0.22em] text-ink/55">
+                  Focused
+                </div>
+              </div>
+              <p className="mt-4 font-ui text-ink/75">
+                Tight group, focused instruction, fast feedback. The bigger the
+                pack, the lower the per-session rate.
+              </p>
+              <ul className="mt-6 divide-y-2 divide-ink/15 border-y-2 border-ink/15">
+                {springPackagesByGroup.small.map((option) => (
+                  <li
+                    key={option.id}
+                    className="grid grid-cols-[1fr_auto_auto] items-center gap-4 py-3"
+                  >
+                    <span className="font-display text-2xl uppercase leading-none">
+                      {option.sessions} {option.sessions === 1 ? "session" : "sessions"}
+                    </span>
+                    <span className="font-display text-2xl leading-none">
+                      {option.price}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={jumpToSpringRegistration(option.id)}
+                      className="inline-flex items-center justify-center border-2 border-ink px-3 py-2 font-mono-display text-[11px] uppercase tracking-wider transition-colors hover:bg-ink hover:text-bone"
+                    >
+                      Register
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="border-2 border-ink bg-ink p-6 text-bone md:p-8">
+              <div className="flex items-baseline justify-between gap-4">
+                <div>
+                  <div className="font-mono-display text-[10px] uppercase tracking-[0.25em] text-orange">
+                    Group
+                  </div>
+                  <h3 className="mt-3 font-display text-4xl uppercase leading-none md:text-5xl">
+                    10-12 players
+                  </h3>
+                </div>
+                <div className="font-mono-display text-[10px] uppercase tracking-[0.22em] text-bone/55">
+                  Team flow
+                </div>
+              </div>
+              <p className="mt-4 font-ui text-bone/75">
+                Larger group sessions with the same coaching team. Same focus
+                areas, more bodies in the gym.
+              </p>
+              <ul className="mt-6 divide-y-2 divide-bone/15 border-y-2 border-bone/15">
+                {springPackagesByGroup.group.map((option) => (
+                  <li
+                    key={option.id}
+                    className="grid grid-cols-[1fr_auto_auto] items-center gap-4 py-3"
+                  >
+                    <span className="font-display text-2xl uppercase leading-none">
+                      {option.sessions} {option.sessions === 1 ? "session" : "sessions"}
+                    </span>
+                    <span className="font-display text-2xl leading-none">
+                      {option.price}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={jumpToSpringRegistration(option.id)}
+                      className="inline-flex items-center justify-center border-2 border-bone px-3 py-2 font-mono-display text-[11px] uppercase tracking-wider text-bone transition-colors hover:bg-bone hover:text-ink"
+                    >
+                      Register
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-2 border-ink bg-bone p-5">
+            <div className="font-mono-display text-xs uppercase tracking-[0.25em] text-ink/70">
+              Family First Discount
+            </div>
+            <div className="font-ui text-sm text-ink/80">
+              <span className="font-display text-xl text-orange">10%</span> off
+              per sibling, applied to any package when multiple siblings are
+              enrolled.
+            </div>
+            <a
+              href="#register"
+              onClick={jumpToSpringRegistration()}
+              className="btn-outline-brutal"
+            >
+              Open spring registration →
+            </a>
+          </div>
+        </div>
+      </section>
+
       <section className="border-b-2 border-ink bg-bone">
         <div className="container py-16 md:py-24">
-          <SectionLabel index="05" label="Before You Sign Up" />
+          <SectionLabel index="06" label="Before You Sign Up" />
           <h2 className="mt-4 font-display text-4xl uppercase leading-[0.9] md:text-6xl">
             Read the <span className="text-orange">fine print.</span>
           </h2>
@@ -731,7 +916,10 @@ const Summer = () => {
       </section>
 
       <RegistrationPacket
+        mode={sessionMode}
+        onModeChange={setSessionMode}
         selectedPackage={registrationIntent.packageId}
+        selectedSpringPackage={registrationIntent.springPackageId}
         intentKey={registrationIntent.key}
       />
 
@@ -741,7 +929,7 @@ const Summer = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/80 to-ink/40" />
         </div>
         <div className="container relative py-20 text-center md:py-32">
-          <SectionLabel index="06" label="The Cut" dark />
+          <SectionLabel index="07" label="The Cut" dark />
           <h2 className="mx-auto mt-6 max-w-4xl font-display text-6xl uppercase leading-[0.85] md:text-8xl">
             This summer changes
             <br />

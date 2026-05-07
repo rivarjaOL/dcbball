@@ -22,6 +22,20 @@ import {
 
 export type ProgramPackageId = "early" | "standard" | "weekly";
 
+export type SpringPackageId =
+  | "small-1"
+  | "small-5"
+  | "small-10"
+  | "small-15"
+  | "small-20"
+  | "group-1"
+  | "group-5"
+  | "group-10"
+  | "group-15"
+  | "group-20";
+
+export type SessionMode = "summer" | "spring";
+
 type StepId = "athlete" | "parent" | "program" | "waiver" | "review";
 
 type RegistrationFormState = {
@@ -44,6 +58,7 @@ type RegistrationFormState = {
   membershipStatus: string;
   facilityLocation: string;
   packageChoice: ProgramPackageId;
+  springPackage: SpringPackageId | "";
   waiverAccepted: boolean;
   siblingDiscountName: string;
   digitalSignature: string;
@@ -53,7 +68,10 @@ type RegistrationFormState = {
 type FieldErrors = Partial<Record<keyof RegistrationFormState, string>>;
 
 type RegistrationPacketProps = {
+  mode?: SessionMode;
+  onModeChange?: (mode: SessionMode) => void;
   selectedPackage?: ProgramPackageId;
+  selectedSpringPackage?: SpringPackageId;
   intentKey?: number;
 };
 
@@ -61,7 +79,16 @@ const GOOGLE_FORM_ENDPOINT =
   "https://docs.google.com/forms/d/e/1FAIpQLScf7b9ChwsWEaoNOaeRpKzCMW6LctFmk-TXeEe1Z5McnMx2iQ/formResponse";
 
 const GOOGLE_IFRAME_NAME = "workhouse-google-form-target";
-const STORAGE_KEY = "workhouse-summer-registration-draft";
+const SUMMER_STORAGE_KEY = "workhouse-summer-registration-draft";
+const SPRING_STORAGE_KEY = "workhouse-spring-registration-draft";
+
+// Google Form entry IDs for the two backend-only fields added 2026-05-07 to
+// flag spring vs. summer registrations in the existing summer responses sheet.
+// Form is the same one used for summer; both questions live in Section 5 so
+// pageHistory remains 0,1,2,3,4.
+const ENTRY_SESSION = "162964379";
+const ENTRY_SPRING_PACKAGE = "1827625793";
+const ENTRY_SUMMER_TRACK = "1351164016";
 
 const SHIRT_SIZES = ["Adult XS", "Adult S", "Adult M", "Adult L", "Adult XL"];
 const GRADES = Array.from({ length: 12 }, (_, index) => String(index + 1));
@@ -122,6 +149,114 @@ const PACKAGE_OPTIONS: Array<{
   },
 ];
 
+// Spring 2026 per-session menu — mirrors what the pre-facelift site advertised.
+// googleValue must match the option text on the Spring Package Google Form
+// question exactly; the form rejects any unknown value.
+export const SPRING_PACKAGE_OPTIONS: Array<{
+  id: SpringPackageId;
+  group: "small" | "group";
+  sessions: number;
+  label: string;
+  price: string;
+  detail: string;
+  googleValue: string;
+}> = [
+  {
+    id: "small-1",
+    group: "small",
+    sessions: 1,
+    label: "Small Group - 1 Session",
+    price: "$150",
+    detail: "Single small group session, 2-4 players, focused instruction.",
+    googleValue: "Small Group - 1 session ($150)",
+  },
+  {
+    id: "small-5",
+    group: "small",
+    sessions: 5,
+    label: "Small Group - 5 Sessions",
+    price: "$725",
+    detail: "Five small group sessions, 2-4 players.",
+    googleValue: "Small Group - 5 sessions ($725)",
+  },
+  {
+    id: "small-10",
+    group: "small",
+    sessions: 10,
+    label: "Small Group - 10 Sessions",
+    price: "$1,400",
+    detail: "Ten small group sessions, 2-4 players.",
+    googleValue: "Small Group - 10 sessions ($1,400)",
+  },
+  {
+    id: "small-15",
+    group: "small",
+    sessions: 15,
+    label: "Small Group - 15 Sessions",
+    price: "$1,925",
+    detail: "Fifteen small group sessions, 2-4 players.",
+    googleValue: "Small Group - 15 sessions ($1,925)",
+  },
+  {
+    id: "small-20",
+    group: "small",
+    sessions: 20,
+    label: "Small Group - 20 Sessions",
+    price: "$2,200",
+    detail: "Twenty small group sessions, 2-4 players. Best per-session rate.",
+    googleValue: "Small Group - 20 sessions ($2,200)",
+  },
+  {
+    id: "group-1",
+    group: "group",
+    sessions: 1,
+    label: "Group - 1 Session",
+    price: "$85",
+    detail: "Single group session, 10-12 players, focused instruction.",
+    googleValue: "Group - 1 session ($85)",
+  },
+  {
+    id: "group-5",
+    group: "group",
+    sessions: 5,
+    label: "Group - 5 Sessions",
+    price: "$375",
+    detail: "Five group sessions, 10-12 players.",
+    googleValue: "Group - 5 sessions ($375)",
+  },
+  {
+    id: "group-10",
+    group: "group",
+    sessions: 10,
+    label: "Group - 10 Sessions",
+    price: "$700",
+    detail: "Ten group sessions, 10-12 players.",
+    googleValue: "Group - 10 sessions ($700)",
+  },
+  {
+    id: "group-15",
+    group: "group",
+    sessions: 15,
+    label: "Group - 15 Sessions",
+    price: "$1,000",
+    detail: "Fifteen group sessions, 10-12 players.",
+    googleValue: "Group - 15 sessions ($1,000)",
+  },
+  {
+    id: "group-20",
+    group: "group",
+    sessions: 20,
+    label: "Group - 20 Sessions",
+    price: "$1,250",
+    detail: "Twenty group sessions, 10-12 players. Best per-session rate.",
+    googleValue: "Group - 20 sessions ($1,250)",
+  },
+];
+
+const SPRING_PACKAGE_IDS = new Set<SpringPackageId>(
+  SPRING_PACKAGE_OPTIONS.map((option) => option.id),
+);
+
 const STEPS: Array<{
   id: StepId;
   label: string;
@@ -153,6 +288,10 @@ function todayInputValue() {
   return `${now.getFullYear()}-${month}-${day}`;
 }
 
+function storageKeyForMode(mode: SessionMode) {
+  return mode === "spring" ? SPRING_STORAGE_KEY : SUMMER_STORAGE_KEY;
+}
+
 function initialFormState(): RegistrationFormState {
   return {
     email: "",
@@ -174,6 +313,7 @@ function initialFormState(): RegistrationFormState {
     membershipStatus: "",
     facilityLocation: FACILITY_LOCATION,
     packageChoice: "standard",
+    springPackage: "",
     waiverAccepted: false,
     siblingDiscountName: "",
     digitalSignature: "",
@@ -181,11 +321,11 @@ function initialFormState(): RegistrationFormState {
   };
 }
 
-function loadDraft(): RegistrationFormState {
+function loadDraft(mode: SessionMode): RegistrationFormState {
   if (typeof window === "undefined") return initialFormState();
 
   try {
-    const draft = window.sessionStorage.getItem(STORAGE_KEY);
+    const draft = window.sessionStorage.getItem(storageKeyForMode(mode));
     if (!draft) return initialFormState();
     const parsed = JSON.parse(draft) as Partial<RegistrationFormState>;
     return {
@@ -197,6 +337,10 @@ function loadDraft(): RegistrationFormState {
           : "",
       packageChoice:
         parsed.packageChoice === "early" ? "standard" : parsed.packageChoice ?? "standard",
+      springPackage:
+        parsed.springPackage && SPRING_PACKAGE_IDS.has(parsed.springPackage as SpringPackageId)
+          ? (parsed.springPackage as SpringPackageId)
+          : "",
     };
   } catch {
     return initialFormState();
@@ -222,7 +366,11 @@ function addRequired(
   }
 }
 
-function validateStep(step: StepId, form: RegistrationFormState): FieldErrors {
+function validateStep(
+  step: StepId,
+  form: RegistrationFormState,
+  mode: SessionMode,
+): FieldErrors {
   const errors: FieldErrors = {};
 
   if (step === "athlete") {
@@ -260,8 +408,14 @@ function validateStep(step: StepId, form: RegistrationFormState): FieldErrors {
     addRequired(errors, form, "skillLevel", "Skill level");
     addRequired(errors, form, "heardFrom", "How you heard about us");
     addRequired(errors, form, "membershipStatus", "Membership status");
-    addRequired(errors, form, "packageChoice", "Package choice");
     addRequired(errors, form, "facilityLocation", "Facility location");
+    if (mode === "spring") {
+      if (!form.springPackage) {
+        errors.springPackage = "Spring package is required.";
+      }
+    } else {
+      addRequired(errors, form, "packageChoice", "Package choice");
+    }
   }
 
   if (step === "waiver") {
@@ -275,12 +429,12 @@ function validateStep(step: StepId, form: RegistrationFormState): FieldErrors {
   return errors;
 }
 
-function validateAll(form: RegistrationFormState) {
+function validateAll(form: RegistrationFormState, mode: SessionMode) {
   return {
-    ...validateStep("athlete", form),
-    ...validateStep("parent", form),
-    ...validateStep("program", form),
-    ...validateStep("waiver", form),
+    ...validateStep("athlete", form, mode),
+    ...validateStep("parent", form, mode),
+    ...validateStep("program", form, mode),
+    ...validateStep("waiver", form, mode),
   };
 }
 
@@ -300,11 +454,14 @@ function appendGoogleDate(body: URLSearchParams, entryId: string, value: string)
   body.set(`entry.${entryId}_day`, date.day);
 }
 
-function buildGooglePayload(form: RegistrationFormState) {
+function buildGooglePayload(form: RegistrationFormState, mode: SessionMode) {
   const packageChoice =
     form.packageChoice === "early" ? "standard" : form.packageChoice;
   const selectedPackage = PACKAGE_OPTIONS.find(
     (option) => option.id === packageChoice,
+  );
+  const selectedSpringPackage = SPRING_PACKAGE_OPTIONS.find(
+    (option) => option.id === form.springPackage,
   );
   const body = new URLSearchParams();
 
@@ -326,15 +483,37 @@ function buildGooglePayload(form: RegistrationFormState) {
   body.set("entry.285169857", form.heardFrom);
   body.set("entry.318356955", form.membershipStatus);
   body.set("entry.115424816", form.facilityLocation);
-  body.set("entry.1351164016", selectedPackage?.googleValue ?? "");
+  // Mode-aware program selection. The summer Track question (entry.1351164016)
+  // is required by the Google Form, so in spring mode we send the chosen
+  // spring package's text into it as well — that satisfies the required check
+  // and keeps the Track column human-readable for spring rows. The dedicated
+  // Spring Package column gives ops a clean, sortable signal.
+  if (mode === "spring") {
+    body.set(`entry.${ENTRY_SPRING_PACKAGE}`, selectedSpringPackage?.googleValue ?? "");
+    body.set(
+      `entry.${ENTRY_SUMMER_TRACK}`,
+      selectedSpringPackage
+        ? `Spring 2026 - ${selectedSpringPackage.googleValue}`
+        : "Spring 2026 Registration",
+    );
+  } else {
+    body.set(`entry.${ENTRY_SUMMER_TRACK}`, selectedPackage?.googleValue ?? "");
+    body.set(`entry.${ENTRY_SPRING_PACKAGE}`, "");
+  }
+  body.set(
+    `entry.${ENTRY_SESSION}`,
+    mode === "spring" ? "Spring 2026" : "Summer 2026",
+  );
   body.set("entry.578812469", "I have read and agree to the terms.");
   body.set("entry.500454811", form.siblingDiscountName.trim());
   body.set("entry.367574461", form.digitalSignature.trim());
   appendGoogleDate(body, "1071552387", form.dateSigned);
   // The summer Google Form is 5 pages (email + 4 section breaks). pageHistory
   // must list every page traversed, comma-separated, or Google silently drops
-  // every entry on pages we didn't claim to visit. If the form gains/loses a
-  // page break, update this and re-verify against the responses sheet.
+  // every entry on pages we didn't claim to visit. The new Session and Spring
+  // Package questions were added on the existing last page (no new section
+  // break), so this value still covers them. If the form gains/loses a page
+  // break, update this and re-verify against the responses sheet.
   body.set("pageHistory", "0,1,2,3,4");
   body.set("fvv", "1");
   body.set("submit", "Submit");
@@ -342,7 +521,16 @@ function buildGooglePayload(form: RegistrationFormState) {
   return body;
 }
 
-function countStepAnswers(step: StepId, form: RegistrationFormState) {
+function countStepAnswers(
+  step: StepId,
+  form: RegistrationFormState,
+  mode: SessionMode,
+) {
+  const programFields: Array<keyof RegistrationFormState> =
+    mode === "spring"
+      ? ["skillLevel", "heardFrom", "membershipStatus", "springPackage"]
+      : ["skillLevel", "heardFrom", "membershipStatus", "packageChoice"];
+
   const groups: Record<StepId, Array<keyof RegistrationFormState>> = {
     athlete: [
       "email",
@@ -362,7 +550,7 @@ function countStepAnswers(step: StepId, form: RegistrationFormState) {
       "emergencyName",
       "emergencyPhone",
     ],
-    program: ["skillLevel", "heardFrom", "membershipStatus", "packageChoice"],
+    program: programFields,
     waiver: ["digitalSignature", "dateSigned"],
     review: [],
   };
@@ -582,10 +770,13 @@ function AnswerRow({
 }
 
 const RegistrationPacket = ({
+  mode = "summer",
+  onModeChange,
   selectedPackage,
+  selectedSpringPackage,
   intentKey,
 }: RegistrationPacketProps) => {
-  const [form, setForm] = useState<RegistrationFormState>(() => loadDraft());
+  const [form, setForm] = useState<RegistrationFormState>(() => loadDraft(mode));
   const [activeStep, setActiveStep] = useState<StepId>("athlete");
   const [errors, setErrors] = useState<FieldErrors>({});
   const [submitState, setSubmitState] = useState<
@@ -593,6 +784,19 @@ const RegistrationPacket = ({
   >("idle");
   const submittingRef = useRef(false);
   const submitTimeoutRef = useRef<number | null>(null);
+  const lastModeRef = useRef<SessionMode>(mode);
+
+  useEffect(() => {
+    if (lastModeRef.current === mode) return;
+    lastModeRef.current = mode;
+    // Mode flipped — load that mode's persisted draft so each session has its
+    // own scratch space and the Program-step package selection resets cleanly.
+    setForm(loadDraft(mode));
+    setErrors({});
+    setActiveStep("athlete");
+    setSubmitState("idle");
+    submittingRef.current = false;
+  }, [mode]);
 
   useEffect(() => {
     if (!selectedPackage) return;
@@ -603,9 +807,18 @@ const RegistrationPacket = ({
   }, [selectedPackage, intentKey]);
 
   useEffect(() => {
+    if (!selectedSpringPackage) return;
+    if (!SPRING_PACKAGE_IDS.has(selectedSpringPackage)) return;
+    setForm((current) => ({
+      ...current,
+      springPackage: selectedSpringPackage,
+    }));
+  }, [selectedSpringPackage, intentKey]);
+
+  useEffect(() => {
     if (typeof window === "undefined" || submitState === "submitted") return;
-    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(form));
-  }, [form, submitState]);
+    window.sessionStorage.setItem(storageKeyForMode(mode), JSON.stringify(form));
+  }, [form, mode, submitState]);
 
   useEffect(
     () => () => {
@@ -628,19 +841,25 @@ const RegistrationPacket = ({
     [form.packageChoice],
   );
 
+  const selectedSpringPackageDetails = useMemo(
+    () =>
+      SPRING_PACKAGE_OPTIONS.find((option) => option.id === form.springPackage),
+    [form.springPackage],
+  );
+
   const activeStepIndex = STEPS.findIndex((step) => step.id === activeStep);
-  const allErrors = useMemo(() => validateAll(form), [form]);
+  const allErrors = useMemo(() => validateAll(form, mode), [form, mode]);
   const completedSteps = useMemo(
     () =>
       STEPS.reduce<Record<StepId, boolean>>((acc, step) => {
         if (step.id === "review") {
           acc[step.id] = Object.keys(allErrors).length === 0;
         } else {
-          acc[step.id] = Object.keys(validateStep(step.id, form)).length === 0;
+          acc[step.id] = Object.keys(validateStep(step.id, form, mode)).length === 0;
         }
         return acc;
       }, {} as Record<StepId, boolean>),
-    [allErrors, form],
+    [allErrors, form, mode],
   );
 
   const updateField = <T extends keyof RegistrationFormState>(
@@ -664,7 +883,7 @@ const RegistrationPacket = ({
   const goNext = (event?: MouseEvent<HTMLButtonElement>) => {
     event?.preventDefault();
 
-    const stepErrors = validateStep(activeStep, form);
+    const stepErrors = validateStep(activeStep, form, mode);
     if (activeStep !== "review" && Object.keys(stepErrors).length > 0) {
       setErrors((current) => ({ ...current, ...stepErrors }));
       return;
@@ -680,8 +899,8 @@ const RegistrationPacket = ({
   };
 
   const googlePayload = useMemo(
-    () => Array.from(buildGooglePayload(form).entries()),
-    [form],
+    () => Array.from(buildGooglePayload(form, mode).entries()),
+    [form, mode],
   );
 
   const completeSubmission = () => {
@@ -693,7 +912,7 @@ const RegistrationPacket = ({
     }
 
     if (typeof window !== "undefined") {
-      window.sessionStorage.removeItem(STORAGE_KEY);
+      window.sessionStorage.removeItem(storageKeyForMode(mode));
     }
 
     submittingRef.current = false;
@@ -717,7 +936,7 @@ const RegistrationPacket = ({
       return;
     }
 
-    const nextErrors = validateAll(form);
+    const nextErrors = validateAll(form, mode);
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0) {
@@ -725,7 +944,7 @@ const RegistrationPacket = ({
       const firstInvalid = STEPS.find(
         (step) =>
           step.id !== "review" &&
-          Object.keys(validateStep(step.id, form)).length > 0,
+          Object.keys(validateStep(step.id, form, mode)).length > 0,
       );
       setActiveStep(firstInvalid?.id ?? "athlete");
       setSubmitState("error");
@@ -744,16 +963,15 @@ const RegistrationPacket = ({
         <div className="container py-16 md:py-24">
           <div className="border-2 border-ink bg-orange p-8 md:p-12 shadow-[8px_8px_0_0_hsl(var(--ink))]">
             <div className="font-mono-display text-xs uppercase tracking-[0.28em] text-ink/70">
-              Registration sent
+              {mode === "spring" ? "Spring registration sent" : "Registration sent"}
             </div>
             <h2 className="mt-4 font-display text-5xl uppercase leading-[0.9] md:text-7xl">
               Registration received.
             </h2>
             <p className="mt-6 max-w-2xl font-ui text-lg leading-relaxed text-ink/80">
-              Your athlete is in the system. DSC Hoops will reach out to confirm
-              the spot and walk you through the Executive Health Club membership
-              before sessions start June 16. Watch the email and phone number
-              you provided.
+              {mode === "spring"
+                ? "Your athlete is in the system for Spring 2026 sessions. DSC Hoops will reach out to confirm the package, schedule your sessions, and walk you through the Executive Health Club membership. Watch the email and phone number you provided."
+                : "Your athlete is in the system. DSC Hoops will reach out to confirm the spot and walk you through the Executive Health Club membership before sessions start June 16. Watch the email and phone number you provided."}
             </p>
             <button
               type="button"
@@ -773,6 +991,11 @@ const RegistrationPacket = ({
     );
   }
 
+  const handleModeChange = (next: SessionMode) => {
+    if (next === mode || !onModeChange) return;
+    onModeChange(next);
+  };
+
   return (
     <section id="register" className="bg-bone border-b-2 border-ink">
       <div className="container py-16 md:py-24">
@@ -782,17 +1005,83 @@ const RegistrationPacket = ({
           <span>Registration</span>
         </div>
 
-        <div className="mt-4 grid gap-6 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-end">
+        <div
+          role="tablist"
+          aria-label="Choose registration session"
+          className="mt-6 grid gap-2 border-2 border-ink bg-bone p-2 sm:grid-cols-2"
+        >
+          {(
+            [
+              {
+                id: "summer" as const,
+                eyebrow: "Summer 2026",
+                label: "9-week Workhouse program",
+                meta: "June 16 - Aug 13",
+              },
+              {
+                id: "spring" as const,
+                eyebrow: "Spring 2026",
+                label: "Per-session packages",
+                meta: "Sessions still running",
+              },
+            ]
+          ).map((option) => {
+            const active = mode === option.id;
+            return (
+              <button
+                key={option.id}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => handleModeChange(option.id)}
+                className={`flex flex-col gap-1 border-2 px-4 py-3 text-left transition-colors ${
+                  active
+                    ? "border-ink bg-ink text-bone"
+                    : "border-ink bg-bone text-ink hover:bg-ink/5"
+                }`}
+              >
+                <span
+                  className={`font-mono-display text-[10px] uppercase tracking-[0.25em] ${
+                    active ? "text-orange" : "text-ink/60"
+                  }`}
+                >
+                  {option.eyebrow}
+                </span>
+                <span className="font-display text-2xl uppercase leading-none md:text-3xl">
+                  {option.label}
+                </span>
+                <span
+                  className={`font-mono-display text-[10px] uppercase tracking-[0.2em] ${
+                    active ? "text-bone/65" : "text-ink/55"
+                  }`}
+                >
+                  {option.meta}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-end">
           <div>
             <h2 className="font-display text-5xl uppercase leading-[0.9] md:text-7xl">
-              Lock in your athlete's{" "}
-              <span className="text-orange">Workhouse summer.</span>
+              {mode === "spring" ? (
+                <>
+                  Get your athlete into{" "}
+                  <span className="text-orange">spring sessions.</span>
+                </>
+              ) : (
+                <>
+                  Lock in your athlete's{" "}
+                  <span className="text-orange">Workhouse summer.</span>
+                </>
+              )}
             </h2>
           </div>
           <p className="max-w-xl font-ui text-lg leading-relaxed text-ink/80 lg:justify-self-end">
-            Register one athlete at a time. Work through each section, review
-            every answer, and submit when your family is ready. Your progress is
-            saved if you need to step away.
+            {mode === "spring"
+              ? "Spring sessions are still running. Pick a Small Group or Group package, fill out one athlete at a time, and DSC Hoops will reach out to schedule. Your progress is saved if you need to step away."
+              : "Register one athlete at a time. Work through each section, review every answer, and submit when your family is ready. Your progress is saved if you need to step away."}
           </p>
         </div>
 
@@ -818,7 +1107,7 @@ const RegistrationPacket = ({
             <div className="border-2 border-ink bg-bone">
               {STEPS.map((step, index) => {
                 const Icon = step.icon;
-                const { answered, total } = countStepAnswers(step.id, form);
+                const { answered, total } = countStepAnswers(step.id, form, mode);
                 const active = activeStep === step.id;
                 const complete = completedSteps[step.id];
 
@@ -870,13 +1159,17 @@ const RegistrationPacket = ({
 
             <div className="mt-5 border-2 border-ink bg-ink p-5 text-bone">
               <div className="font-mono-display text-[10px] uppercase tracking-[0.25em] text-bone/60">
-                Selected program
+                {mode === "spring" ? "Selected spring package" : "Selected program"}
               </div>
               <div className="mt-3 font-display text-3xl uppercase leading-none">
                 {form.athleteName || "New athlete"}
               </div>
               <div className="mt-2 font-ui text-sm text-bone/70">
-                {selectedPackageDetails?.label} - {selectedPackageDetails?.price}
+                {mode === "spring"
+                  ? selectedSpringPackageDetails
+                    ? `${selectedSpringPackageDetails.label} - ${selectedSpringPackageDetails.price}`
+                    : "Pick a package in step 03"
+                  : `${selectedPackageDetails?.label} - ${selectedPackageDetails?.price}`}
               </div>
             </div>
           </aside>
@@ -1054,38 +1347,77 @@ const RegistrationPacket = ({
                     />
                   </div>
 
-                  <div>
-                    <div className="mb-3 flex items-center justify-between gap-3 font-mono-display text-[11px] uppercase tracking-[0.22em] text-ink/70">
-                      <span>Summer Package</span>
-                      <span className="shrink-0 tracking-[0.16em] text-orange">
-                        Required
-                      </span>
-                    </div>
-                    <div className="mb-4 border-2 border-ink bg-bone p-4">
-                      <div className="font-display text-3xl uppercase leading-none text-ink">
-                        Choose full program or weekly.
+                  {mode === "spring" ? (
+                    <div>
+                      <div className="mb-3 flex items-center justify-between gap-3 font-mono-display text-[11px] uppercase tracking-[0.22em] text-ink/70">
+                        <span>Spring Package</span>
+                        <span className="shrink-0 tracking-[0.16em] text-orange">
+                          Required
+                        </span>
                       </div>
-                      <p className="mt-2 font-ui text-sm text-ink/75">
-                        Lock in the full Workhouse summer, or reserve the
-                        individual weeks that fit your family's calendar. Your
-                        selection is highlighted before you continue.
-                      </p>
+                      <div className="mb-4 border-2 border-ink bg-bone p-4">
+                        <div className="font-display text-3xl uppercase leading-none text-ink">
+                          Pick a Small Group or Group pack.
+                        </div>
+                        <p className="mt-2 font-ui text-sm text-ink/75">
+                          Small Group keeps the room to 2-4 players for focused
+                          instruction. Group runs 10-12 players with the same
+                          coaching team. The bigger packs lower the per-session
+                          rate.
+                        </p>
+                      </div>
+                      <ChoiceGrid
+                        value={form.springPackage}
+                        error={errors.springPackage}
+                        onChange={(value) =>
+                          updateField("springPackage", value as SpringPackageId)
+                        }
+                        options={SPRING_PACKAGE_OPTIONS.map((option) => ({
+                          value: option.id,
+                          label: option.label,
+                          detail: option.detail,
+                          price: option.price,
+                          eyebrow:
+                            option.group === "small"
+                              ? "Small group track"
+                              : "Group track",
+                        }))}
+                      />
                     </div>
-                    <ChoiceGrid
-                      value={form.packageChoice}
-                      onChange={(value) =>
-                        updateField("packageChoice", value as ProgramPackageId)
-                      }
-                      options={visiblePackageOptions.map((option, index) => ({
-                        value: option.id,
-                        label: option.label,
-                        detail: `${option.kicker} - ${option.detail}`,
-                        price: option.price,
-                        eyebrow:
-                          index === 0 ? "Full summer track" : "Weekly track",
-                      }))}
-                    />
-                  </div>
+                  ) : (
+                    <div>
+                      <div className="mb-3 flex items-center justify-between gap-3 font-mono-display text-[11px] uppercase tracking-[0.22em] text-ink/70">
+                        <span>Summer Package</span>
+                        <span className="shrink-0 tracking-[0.16em] text-orange">
+                          Required
+                        </span>
+                      </div>
+                      <div className="mb-4 border-2 border-ink bg-bone p-4">
+                        <div className="font-display text-3xl uppercase leading-none text-ink">
+                          Choose full program or weekly.
+                        </div>
+                        <p className="mt-2 font-ui text-sm text-ink/75">
+                          Lock in the full Workhouse summer, or reserve the
+                          individual weeks that fit your family's calendar. Your
+                          selection is highlighted before you continue.
+                        </p>
+                      </div>
+                      <ChoiceGrid
+                        value={form.packageChoice}
+                        onChange={(value) =>
+                          updateField("packageChoice", value as ProgramPackageId)
+                        }
+                        options={visiblePackageOptions.map((option, index) => ({
+                          value: option.id,
+                          label: option.label,
+                          detail: `${option.kicker} - ${option.detail}`,
+                          price: option.price,
+                          eyebrow:
+                            index === 0 ? "Full summer track" : "Weekly track",
+                        }))}
+                      />
+                    </div>
+                  )}
 
                   <div className="border-2 border-ink bg-ink p-5 text-bone">
                     <div className="font-mono-display text-[10px] uppercase tracking-[0.25em] text-orange">
@@ -1220,6 +1552,10 @@ const RegistrationPacket = ({
                   </ReviewGroup>
 
                   <ReviewGroup title="Program" onEdit={() => goToStep("program")}>
+                    <AnswerRow
+                      label="Session"
+                      value={mode === "spring" ? "Spring 2026" : "Summer 2026"}
+                    />
                     <AnswerRow label="Skill level" value={form.skillLevel} />
                     <AnswerRow label="Heard from" value={form.heardFrom} />
                     <AnswerRow
@@ -1233,9 +1569,15 @@ const RegistrationPacket = ({
                     <AnswerRow label="Facility" value={form.facilityLocation} />
                     <AnswerRow
                       label="Package"
-                      value={`${selectedPackageDetails?.label ?? "Not set"} - ${
-                        selectedPackageDetails?.price ?? ""
-                      }`}
+                      value={
+                        mode === "spring"
+                          ? selectedSpringPackageDetails
+                            ? `${selectedSpringPackageDetails.label} - ${selectedSpringPackageDetails.price}`
+                            : "Not set"
+                          : `${selectedPackageDetails?.label ?? "Not set"} - ${
+                              selectedPackageDetails?.price ?? ""
+                            }`
+                      }
                     />
                   </ReviewGroup>
 
