@@ -100,6 +100,9 @@ const HEARD_FROM = [
   "Other",
 ];
 
+// Membership options must match the live Google Form's accepted values for
+// entry.318356955 EXACTLY — Google rejects any string that isn't a recognized
+// option. Verified against the published form on 2026-05-07.
 const MEMBERSHIP_OPTIONS = [
   {
     value: "YES, HAVE A CURRENT MEMBERSHIP",
@@ -113,6 +116,13 @@ const MEMBERSHIP_OPTIONS = [
     detail:
       "You will set up the 3-month summer membership before sessions begin. Cost is $255, paid directly to Executive Health Club.",
   },
+  {
+    value:
+      "DO NOT WANT A MEMBERSHIP, BUT WILL PAY THE ADDED WEEKLY FEE $40 (FOR WEEKLY REGISTRATIONS)",
+    label: "No membership / pay weekly fee",
+    detail:
+      "You will pay an added $40 per week non-member fee instead of an Executive Health Club membership. Most relevant for weekly summer registrations or per-session spring packages.",
+  },
 ];
 
 const MEMBERSHIP_VALUES = new Set(
@@ -120,6 +130,57 @@ const MEMBERSHIP_VALUES = new Set(
 );
 
 const FACILITY_LOCATION = "Manchester Facility: Executive Health and Sports Club";
+
+// Snapshot of the live Google Form's accepted values for every required
+// Multiple Choice / Dropdown entry. Used as a final sanity gate in
+// buildGooglePayload — any drift between our hardcoded React values and the
+// form's options would otherwise let Google silently reject the submission
+// while the iframe-target POST returns onLoad, fooling the success screen.
+// Re-verify this list whenever the Google Form is edited.
+const FORM_ACCEPTED_VALUES: Record<string, ReadonlyArray<string>> = {
+  // Athlete's Grade
+  "725928791": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+  // Athlete's Shirt Size
+  "1604730758": ["Adult XS", "Adult S", "Adult M", "Adult L", "Adult XL"],
+  // Skill level
+  "430059934": ["Beginner", "Intermediate", "Advanced", "Pro"],
+  // Heard from
+  "285169857": ["Executive Health Club", "Word of Mouth", "Social Media", "Other"],
+  // Membership
+  "318356955": [
+    "YES, HAVE A CURRENT MEMBERSHIP",
+    "NO, BUT WILL GET A 3 MONTH MEMBERSHIP FOR THE SUMMER PROGRAM",
+    "DO NOT WANT A MEMBERSHIP, BUT WILL PAY THE ADDED WEEKLY FEE $40 (FOR WEEKLY REGISTRATIONS)",
+  ],
+  // Facility location
+  "115424816": ["Manchester Facility: Executive Health and Sports Club"],
+  // Liability waiver
+  "578812469": ["I have read and agree to the terms."],
+  // Session (added 2026-05-07)
+  [ENTRY_SESSION]: ["Spring 2026", "Summer 2026"],
+  // Spring Package (added 2026-05-07)
+  [ENTRY_SPRING_PACKAGE]: [
+    "Small Group - 1 session ($150)",
+    "Small Group - 5 sessions ($725)",
+    "Small Group - 10 sessions ($1,400)",
+    "Small Group - 15 sessions ($1,925)",
+    "Small Group - 20 sessions ($2,200)",
+    "Group - 1 session ($85)",
+    "Group - 5 sessions ($375)",
+    "Group - 10 sessions ($700)",
+    "Group - 15 sessions ($1,000)",
+    "Group - 20 sessions ($1,250)",
+  ],
+};
+
+// Summer Track (entry.1351164016) is intentionally not in FORM_ACCEPTED_VALUES.
+// In summer mode we send one of the PACKAGE_OPTIONS googleValue strings (which
+// match the form). In spring mode we send a "Spring 2026 - <package>" fallback
+// string that does NOT match any predefined option — Google's formResponse
+// endpoint accepts it as an Other-like response. If a future form edit toggles
+// strict validation on this question, spring submissions will start failing
+// and we'll need to either flip the question to optional or add a Spring 2026
+// option to it.
 
 const PACKAGE_OPTIONS: Array<{
   id: ProgramPackageId;
@@ -355,6 +416,56 @@ function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
+function parseDateInput(value: string): Date | null {
+  if (!value) return null;
+  // <input type="date"> emits YYYY-MM-DD. Parse explicitly so we don't get
+  // bitten by timezone shifts when the browser reinterprets the string.
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return null;
+  const [, y, m, d] = match;
+  const date = new Date(Number(y), Number(m) - 1, Number(d));
+  if (
+    Number.isNaN(date.getTime()) ||
+    date.getFullYear() !== Number(y) ||
+    date.getMonth() !== Number(m) - 1 ||
+    date.getDate() !== Number(d)
+  ) {
+    return null;
+  }
+  return date;
+}
+
+// Google's date fields silently reject out-of-range years (year 1111 was the
+// real-world failure that motivated this gate). Cap the reasonable range at
+// 100 years before today and disallow future dates so a typo at the date
+// picker can't slip past validation.
+function isReasonableDob(value: string): boolean {
+  const date = parseDateInput(value);
+  if (!date) return false;
+  const now = new Date();
+  const minYear = now.getFullYear() - 100;
+  return date.getFullYear() >= minYear && date <= now;
+}
+
+// Date Signed defaults to today and is meant to mark when the parent signed
+// the waiver. Allow the same day or up to a week back, never the future.
+function isReasonableSignDate(value: string): boolean {
+  const date = parseDateInput(value);
+  if (!date) return false;
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const sevenDaysAgo = new Date(today);
+  sevenDaysAgo.setDate(today.getDate() - 7);
+  return date <= today && date >= sevenDaysAgo;
+}
+
+// Looks for at least 10 digits anywhere in the string (a real US phone
+// regardless of separators) and rejects pure-noise inputs like "5551".
+function isPlausiblePhone(value: string): boolean {
+  const digits = value.replace(/\D/g, "");
+  return digits.length >= 10 && digits.length <= 15;
+}
+
 function addRequired(
   errors: FieldErrors,
   form: RegistrationFormState,
@@ -391,19 +502,12 @@ function validateStep(
     }
     // Catch obviously invalid DOBs (e.g. typo years like 1111) before submit.
     // Google Forms silently rejects out-of-range dates and the iframe-target
-    // POST has no way to surface that failure back to the user, so we have
-    // to enforce a sane window client-side.
-    if (form.athleteDob) {
-      const dob = new Date(form.athleteDob);
-      const now = new Date();
-      const minYear = now.getFullYear() - 100;
-      if (
-        Number.isNaN(dob.getTime()) ||
-        dob > now ||
-        dob.getFullYear() < minYear
-      ) {
-        errors.athleteDob = "Enter a valid date of birth.";
-      }
+    // POST has no way to surface that failure back to the user.
+    if (form.athleteDob && !isReasonableDob(form.athleteDob)) {
+      errors.athleteDob = "Enter a valid date of birth.";
+    }
+    if (form.athletePhone && !isPlausiblePhone(form.athletePhone)) {
+      errors.athletePhone = "Enter a valid phone number (at least 10 digits).";
     }
   }
 
@@ -417,6 +521,14 @@ function validateStep(
 
     if (form.parentEmail && !isValidEmail(form.parentEmail)) {
       errors.parentEmail = "Enter a valid parent / guardian email.";
+    }
+    if (form.parentPhone && !isPlausiblePhone(form.parentPhone)) {
+      errors.parentPhone =
+        "Enter a valid parent / guardian phone (at least 10 digits).";
+    }
+    if (form.emergencyPhone && !isPlausiblePhone(form.emergencyPhone)) {
+      errors.emergencyPhone =
+        "Enter a valid emergency contact phone (at least 10 digits).";
     }
   }
 
@@ -440,6 +552,9 @@ function validateStep(
     }
     addRequired(errors, form, "digitalSignature", "Digital signature");
     addRequired(errors, form, "dateSigned", "Date signed");
+    if (form.dateSigned && !isReasonableSignDate(form.dateSigned)) {
+      errors.dateSigned = "Use today's date (or within the last week).";
+    }
   }
 
   return errors;
@@ -452,6 +567,59 @@ function validateAll(form: RegistrationFormState, mode: SessionMode) {
     ...validateStep("program", form, mode),
     ...validateStep("waiver", form, mode),
   };
+}
+
+// Defense-in-depth: re-check every value we're about to send against the
+// Google Form's accepted options before posting. The user-facing pickers
+// (SelectField, ChoiceGrid) already constrain choice to predefined values,
+// but this catches three classes of silent failure that step validation
+// alone wouldn't:
+//   1) Drift between our hardcoded React option strings and the form's live
+//      options (form admin edits a question without telling us).
+//   2) Stale draft state in sessionStorage from a previous form version.
+//   3) Programmatic state mutation from devtools or extensions.
+// Returns an empty array when the payload is safe to send. A non-empty array
+// is shown to the user instead of submitting.
+function validatePayloadAgainstForm(
+  form: RegistrationFormState,
+  mode: SessionMode,
+): string[] {
+  const issues: string[] = [];
+  const valueByEntry: Record<string, string> = {
+    "725928791": form.athleteGrade,
+    "1604730758": form.shirtSize,
+    "430059934": form.skillLevel,
+    "285169857": form.heardFrom,
+    "318356955": form.membershipStatus,
+    "115424816": form.facilityLocation,
+    "578812469": "I have read and agree to the terms.",
+    [ENTRY_SESSION]: mode === "spring" ? "Spring 2026" : "Summer 2026",
+  };
+
+  if (mode === "spring") {
+    const selectedSpring = SPRING_PACKAGE_OPTIONS.find(
+      (option) => option.id === form.springPackage,
+    );
+    valueByEntry[ENTRY_SPRING_PACKAGE] = selectedSpring?.googleValue ?? "";
+  }
+
+  for (const [entryId, accepted] of Object.entries(FORM_ACCEPTED_VALUES)) {
+    const value = valueByEntry[entryId];
+    if (value === undefined) continue;
+    // Spring Package is optional in the form — empty string is fine in
+    // summer mode; in spring mode it's required and validateStep already
+    // surfaces a missing value, but we still need it to match an option.
+    if (entryId === ENTRY_SPRING_PACKAGE && mode !== "spring" && value === "") {
+      continue;
+    }
+    if (!accepted.includes(value)) {
+      issues.push(
+        `Field entry.${entryId} value "${value || "(empty)"}" is not one of the form's accepted options. The Google Form may have changed — refresh and try again, or contact support.`,
+      );
+    }
+  }
+
+  return issues;
 }
 
 function splitDate(value: string) {
@@ -798,6 +966,7 @@ const RegistrationPacket = ({
   const [submitState, setSubmitState] = useState<
     "idle" | "submitting" | "submitted" | "error"
   >("idle");
+  const [payloadError, setPayloadError] = useState<string | null>(null);
   const submittingRef = useRef(false);
   const submitTimeoutRef = useRef<number | null>(null);
   const lastModeRef = useRef<SessionMode>(mode);
@@ -889,6 +1058,7 @@ const RegistrationPacket = ({
       return next;
     });
     setSubmitState("idle");
+    setPayloadError(null);
   };
 
   const goToStep = (step: StepId) => {
@@ -964,9 +1134,22 @@ const RegistrationPacket = ({
       );
       setActiveStep(firstInvalid?.id ?? "athlete");
       setSubmitState("error");
+      setPayloadError(null);
       return;
     }
 
+    // Final defense: every value we're about to POST must be one Google's
+    // form would accept. If it isn't, halt instead of letting the iframe
+    // load Google's silent rejection page and show a false success screen.
+    const payloadIssues = validatePayloadAgainstForm(form, mode);
+    if (payloadIssues.length > 0) {
+      event.preventDefault();
+      setPayloadError(payloadIssues[0]);
+      setSubmitState("error");
+      return;
+    }
+
+    setPayloadError(null);
     setSubmitState("submitting");
     submittingRef.current = true;
 
@@ -1658,7 +1841,7 @@ const RegistrationPacket = ({
 
             {submitState === "error" && (
               <div className="border-t-2 border-ink bg-orange/15 p-4 font-ui text-sm font-semibold text-ink">
-                Check the highlighted fields, then submit again.
+                {payloadError ?? "Check the highlighted fields, then submit again."}
               </div>
             )}
           </div>
