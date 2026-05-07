@@ -25,10 +25,10 @@
 function onFormSubmit(e) {
   // Tracking sheet URL
   var sheetUrl = 'https://docs.google.com/spreadsheets/d/1-_MBTiupAFNOcXvkDpn_FfNhiqAwZoNqULoPw4QFu5o/edit?resourcekey=&gid=453007637#gid=453007637';
-  
+
   // Extract form values from the event object
   var named = e.namedValues || {};
-  
+
   // Get the athlete's name from the form submission
   // The key must match exactly the column header in your responses sheet
   var playerName = 'Unknown player';
@@ -38,15 +38,48 @@ function onFormSubmit(e) {
     // Log a warning if the name field is missing
     Logger.log('Warning: Athlete\'s Name not found in form submission');
   }
-  
-  // Build email subject
-  var subject = 'New form submission: ' + playerName;
-  
+
+  // Session column was added 2026-05-07 to flag spring vs. summer registrations
+  // in the same sheet. Default to summer for any rows that arrive without it
+  // (e.g. legacy submissions or someone using the public form before picking
+  // a Session value).
+  var sessionLabel = 'Summer';
+  var sessionRaw = '';
+  if (named['Session'] && named['Session'][0]) {
+    sessionRaw = String(named['Session'][0]).trim();
+    if (sessionRaw.toLowerCase().indexOf('spring') === 0) {
+      sessionLabel = 'Spring';
+    }
+  }
+
+  // Spring Package column captures the chosen Small Group / Group package for
+  // spring registrations. Empty for summer rows.
+  var springPackage = '';
+  if (named['Spring Package'] && named['Spring Package'][0]) {
+    springPackage = String(named['Spring Package'][0]).trim();
+  }
+
+  // Build email subject — prefix tells David at a glance which program the
+  // family is registering for so follow-up doesn't get crossed.
+  var subject = sessionLabel + ' Registration: ' + playerName;
+
   // Build email body
-  var body = 'A new Workhouse Basketball registration form was submitted for ' + playerName + '.\n\n' +
-             'View the tracking sheet: ' + sheetUrl + '\n\n' +
-             'This is an automated notification from the registration form.';
-  
+  var bodyLines = [
+    'A new DSC Hoops registration form was submitted for ' + playerName + '.',
+    '',
+    'Session: ' + (sessionRaw || sessionLabel + ' 2026'),
+  ];
+  if (springPackage) {
+    bodyLines.push('Spring package: ' + springPackage);
+  }
+  bodyLines.push(
+    '',
+    'View the tracking sheet: ' + sheetUrl,
+    '',
+    'This is an automated notification from the registration form.'
+  );
+  var body = bodyLines.join('\n');
+
   // Send email
   try {
     MailApp.sendEmail({
@@ -55,9 +88,9 @@ function onFormSubmit(e) {
       subject: subject,
       body: body
     });
-    
+
     // Log successful email send
-    Logger.log('Email notification sent for: ' + playerName);
+    Logger.log('Email notification sent for: ' + playerName + ' (' + sessionLabel + ')');
   } catch (error) {
     // Log any errors that occur
     Logger.log('Error sending email notification: ' + error.toString());
