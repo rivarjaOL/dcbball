@@ -1,4 +1,5 @@
 import {
+  AlertTriangle,
   ArrowLeft,
   ArrowRight,
   Check,
@@ -328,7 +329,7 @@ const STEPS: Array<{
   { id: "parent", label: "Contacts", shortLabel: "Family + emergency", icon: Users },
   { id: "program", label: "Program", shortLabel: "Package choices", icon: Trophy },
   { id: "waiver", label: "Waiver", shortLabel: "Agreement", icon: ShieldCheck },
-  { id: "review", label: "Review", shortLabel: "Ready to send", icon: ClipboardList },
+  { id: "review", label: "Submit", shortLabel: "Final step — send it", icon: ClipboardList },
 ];
 
 const WAIVER_TEXT = [
@@ -1715,14 +1716,31 @@ const RegistrationPacket = ({
                       </p>
                     </div>
                   ) : (
-                    <div className="border-2 border-ink bg-orange p-5">
-                      <div className="font-display text-3xl uppercase leading-none">
-                        Ready to submit.
+                    <div className="border-2 border-ink bg-orange p-5 shadow-[6px_6px_0_0_hsl(var(--ink))] md:p-6">
+                      <div className="flex items-start gap-4">
+                        <AlertTriangle
+                          className="h-9 w-9 shrink-0 text-ink"
+                          strokeWidth={2.5}
+                        />
+                        <div>
+                          <div className="font-mono-display text-[10px] uppercase tracking-[0.28em] text-ink/70">
+                            Final step — not sent yet
+                          </div>
+                          <div className="mt-2 font-display text-3xl uppercase leading-none md:text-4xl">
+                            Press Submit Registration below.
+                          </div>
+                          <p className="mt-3 font-ui text-sm leading-relaxed text-ink">
+                            Your registration <strong>won't reach DSC Hoops</strong>{" "}
+                            until you press the orange{" "}
+                            <span className="font-semibold uppercase">
+                              Submit Registration
+                            </span>{" "}
+                            button at the bottom of this page. Look over every
+                            answer below first — use the edit buttons to fix
+                            anything that needs a change.
+                          </p>
+                        </div>
                       </div>
-                      <p className="mt-2 font-ui text-sm text-ink/75">
-                        Look over every answer below. When it's right, send it
-                        to DSC Hoops.
-                      </p>
                     </div>
                   )}
 
@@ -1796,7 +1814,7 @@ const RegistrationPacket = ({
               )}
             </div>
 
-            <div className="flex flex-col-reverse gap-3 border-t-2 border-ink p-5 md:flex-row md:items-center md:justify-between md:p-6">
+            <div className="flex flex-col-reverse gap-3 border-t-2 border-ink bg-bone p-5 md:flex-row md:items-center md:justify-between md:p-6">
               <button
                 type="button"
                 onClick={goBack}
@@ -1812,7 +1830,8 @@ const RegistrationPacket = ({
                   key="submit-registration"
                   type="submit"
                   disabled={submitState === "submitting"}
-                  className="btn-brutal justify-center disabled:cursor-wait disabled:opacity-70"
+                  className="btn-brutal justify-center text-lg disabled:cursor-wait disabled:opacity-70 md:text-xl"
+                  style={{ paddingInline: "2rem", paddingBlock: "1.1rem" }}
                 >
                   {submitState === "submitting" ? (
                     <>
@@ -1839,6 +1858,25 @@ const RegistrationPacket = ({
               )}
             </div>
 
+            {activeStep === "review" && submitState !== "submitting" && (
+              <div
+                className="fixed inset-x-0 bottom-0 z-30 border-t-2 border-ink bg-bone p-3 shadow-[0_-4px_0_0_hsl(var(--ink))] lg:hidden"
+                aria-hidden="false"
+              >
+                <button
+                  type="submit"
+                  className="btn-brutal w-full justify-center text-base"
+                  style={{ paddingBlock: "0.95rem" }}
+                >
+                  Submit Registration
+                  <Send className="h-5 w-5" />
+                </button>
+                <p className="mt-2 text-center font-mono-display text-[10px] uppercase tracking-[0.22em] text-ink/70">
+                  Press to send your registration
+                </p>
+              </div>
+            )}
+
             {submitState === "error" && (
               <div className="border-t-2 border-ink bg-orange/15 p-4 font-ui text-sm font-semibold text-ink">
                 {payloadError ?? "Check the highlighted fields, then submit again."}
@@ -1846,6 +1884,9 @@ const RegistrationPacket = ({
             )}
           </div>
         </form>
+        {activeStep === "review" && submitState !== "submitting" && (
+          <div className="h-28 lg:hidden" aria-hidden />
+        )}
       </div>
     </section>
   );
