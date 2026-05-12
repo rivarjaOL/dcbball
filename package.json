@@ -10,7 +10,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "apps-script:push": "clasp push -f",
+    "apps-script:pull": "clasp pull",
+    "apps-script:status": "clasp status"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

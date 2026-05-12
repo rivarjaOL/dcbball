@@ -1,0 +1,7 @@
+# Allowlist-only: only the two files below are pushed to Apps Script.
+# Adding new .gs files or other manifests to the repo will silently skip them
+# until they are also unignored here.
+*
+**/*
+!form-submit-notification.gs
+!appsscript.json

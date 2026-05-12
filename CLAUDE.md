@@ -166,7 +166,17 @@ A dedicated **Flex Package** Google Form question has **not** been added yet —
 
 Both backend-only questions live in the existing last section of the form (Acknowledgements & Agreements) — **no new section breaks were added**, so `pageHistory` stays `0,1,2,3,4`. If a section break is ever added or removed, update the `pageHistory` value in `buildGooglePayload()` and re-verify against the responses sheet.
 
-The Apps Script still relies on the exact response column header `"Athlete's Name"` when building the email subject. It also reads `Session` to prefix the subject (`Spring Registration:` vs `Summer Registration:` — summer-flex keeps `Summer Registration:`), `Spring Package` for the body, and scans every column for a `"Summer 2026 Flex - "` prefix so the Flex pack surfaces in the email regardless of the Summer Track column's exact header. **The script in `form-submit-notification.gs` is the source of truth, but Google Apps Script runs from a copy in the cloud — paste this file into the script editor whenever it changes.**
+The Apps Script still relies on the exact response column header `"Athlete's Name"` when building the email subject. It also reads `Session` to prefix the subject (`Spring Registration:` vs `Summer Registration:` — summer-flex keeps `Summer Registration:`), `Spring Package` for the body, and scans every column for a `"Summer 2026 Flex - "` prefix so the Flex pack surfaces in the email regardless of the Summer Track column's exact header.
+
+The script in `form-submit-notification.gs` is the source of truth and is deployed via [`clasp`](https://github.com/google/clasp). After editing, run:
+
+```bash
+npm run apps-script:push
+```
+
+This replaces the cloud copy of the script bound to the responses sheet (script ID is in `.clasp.json`). The form-submit trigger fires on the `onFormSubmit` function name, which is unchanged across deploys. To pull the live cloud copy back into the repo (e.g. to confirm no out-of-band edits happened in the Apps Script editor), run `npm run apps-script:pull` — it overwrites the local `form-submit-notification.gs`, so commit or stash first if you have unpushed changes.
+
+One-time setup for a new contributor: `npm install -g @google/clasp`, then `clasp login` (browser OAuth) and turn on the Apps Script API at https://script.google.com/home/usersettings.
 
 Drafts are saved per mode under separate sessionStorage keys: `workhouse-summer-registration-draft`, `workhouse-summer-flex-registration-draft`, and `workhouse-spring-registration-draft`. Toggling between modes loads that mode's draft cleanly.
 
