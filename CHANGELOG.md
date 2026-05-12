@@ -2,6 +2,15 @@
 
 ## May 2026
 
+### May 12, 2026
+- **Summer Flex Packages Added:**
+  - Added four new Summer Flex workout packages families can register for directly on the website: 5-Workout ($475), 10-Workout ($825), 15-Workout ($1,125), and 20-Workout ($1,395)
+  - Flex packages run June 16 - Aug 13 on afternoons (Tuesday 2 & 3 PM, Wednesday and Thursday 4 & 5 PM) — sessions are scheduled with DSC Hoops directly at `hoops@dscinternationalgroup.com`
+  - Added a "Summer Flex" section on the landing page between Pricing and Spring Sessions, and a Flex schedule sub-block under the existing Summer Schedule
+  - The registration packet now has a third "Summer Flex" tab alongside Summer and Spring; selecting a Flex pack jumps the registration form to the right track automatically
+  - Registration drafts for the new Flex track save independently from Summer and Spring drafts so families can switch tabs without losing progress
+  - Flex registrations route through the same email notification — the email body now calls out the chosen Flex pack and reminds the office to schedule directly with the family
+
 ### May 2, 2026
 - **Summer Site Launch:**
   - Made the Workhouse Warrior Summer 2026 page the main live website at the root URL

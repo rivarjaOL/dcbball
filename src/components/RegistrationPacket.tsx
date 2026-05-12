@@ -35,7 +35,9 @@ export type SpringPackageId =
   | "group-15"
   | "group-20";
 
-export type SessionMode = "summer" | "spring";
+export type FlexPackageId = "flex-5" | "flex-10" | "flex-15" | "flex-20";
+
+export type SessionMode = "summer" | "summer-flex" | "spring";
 
 type StepId = "athlete" | "parent" | "program" | "waiver" | "review";
 
@@ -60,6 +62,7 @@ type RegistrationFormState = {
   facilityLocation: string;
   packageChoice: ProgramPackageId;
   springPackage: SpringPackageId | "";
+  flexPackage: FlexPackageId | "";
   waiverAccepted: boolean;
   siblingDiscountName: string;
   digitalSignature: string;
@@ -73,6 +76,7 @@ type RegistrationPacketProps = {
   onModeChange?: (mode: SessionMode) => void;
   selectedPackage?: ProgramPackageId;
   selectedSpringPackage?: SpringPackageId;
+  selectedFlexPackage?: FlexPackageId;
   intentKey?: number;
 };
 
@@ -82,6 +86,7 @@ const GOOGLE_FORM_ENDPOINT =
 const GOOGLE_IFRAME_NAME = "workhouse-google-form-target";
 const SUMMER_STORAGE_KEY = "workhouse-summer-registration-draft";
 const SPRING_STORAGE_KEY = "workhouse-spring-registration-draft";
+const SUMMER_FLEX_STORAGE_KEY = "workhouse-summer-flex-registration-draft";
 
 // Google Form entry IDs for the two backend-only fields added 2026-05-07 to
 // flag spring vs. summer registrations in the existing summer responses sheet.
@@ -176,12 +181,19 @@ const FORM_ACCEPTED_VALUES: Record<string, ReadonlyArray<string>> = {
 
 // Summer Track (entry.1351164016) is intentionally not in FORM_ACCEPTED_VALUES.
 // In summer mode we send one of the PACKAGE_OPTIONS googleValue strings (which
-// match the form). In spring mode we send a "Spring 2026 - <package>" fallback
-// string that does NOT match any predefined option — Google's formResponse
-// endpoint accepts it as an Other-like response. If a future form edit toggles
-// strict validation on this question, spring submissions will start failing
-// and we'll need to either flip the question to optional or add a Spring 2026
-// option to it.
+// match the form). In spring mode we send a "Spring 2026 - <package>" fallback,
+// and in summer-flex mode we send a "Summer 2026 Flex - <package>" fallback.
+// Neither fallback matches a predefined option — Google's formResponse endpoint
+// accepts them as Other-like responses. If a future form edit toggles strict
+// validation on this question, those submissions will start failing and we'll
+// need to either flip the question to optional or add explicit options for the
+// Spring 2026 and Summer Flex tracks.
+//
+// TODO (post-launch follow-up): add a dedicated "Flex Package" Multiple Choice
+// question to the Google Form so flex selections land in their own column
+// instead of riding along inside Summer Track. Once added, wire an
+// ENTRY_FLEX_PACKAGE constant and mirror the spring split (clean column +
+// fallback string).
 
 const PACKAGE_OPTIONS: Array<{
   id: ProgramPackageId;
@@ -319,6 +331,63 @@ const SPRING_PACKAGE_IDS = new Set<SpringPackageId>(
   SPRING_PACKAGE_OPTIONS.map((option) => option.id),
 );
 
+// Summer Flex 2026 per-workout menu — flexible scheduling for athletes who
+// can't commit to the full 5 AM Warrior block. Sessions are booked directly
+// with hoops@dscinternationalgroup.com against the published afternoon
+// availability (Tue 2 & 3 PM, Wed/Thu 4 & 5 PM). The googleValue strings are
+// stuffed into Summer Track via a "Summer 2026 Flex - <package>" prefix until
+// a dedicated Flex Package question is added to the Google Form.
+export const FLEX_PACKAGE_OPTIONS: Array<{
+  id: FlexPackageId;
+  sessions: number;
+  label: string;
+  price: string;
+  kicker: string;
+  detail: string;
+  googleValue: string;
+}> = [
+  {
+    id: "flex-5",
+    sessions: 5,
+    label: "5-Workout Package",
+    price: "$475",
+    kicker: "Limited availability",
+    detail: "Ideal for athletes with limited summer availability.",
+    googleValue: "5-Workout Package ($475)",
+  },
+  {
+    id: "flex-10",
+    sessions: 10,
+    label: "10-Workout Package",
+    price: "$825",
+    kicker: "Steady development",
+    detail: "Great for steady summer development.",
+    googleValue: "10-Workout Package ($825)",
+  },
+  {
+    id: "flex-15",
+    sessions: 15,
+    label: "15-Workout Package",
+    price: "$1,125",
+    kicker: "Best value",
+    detail: "Best value for athletes committed to consistent growth.",
+    googleValue: "15-Workout Package ($1,125)",
+  },
+  {
+    id: "flex-20",
+    sessions: 20,
+    label: "20-Workout Package",
+    price: "$1,395",
+    kicker: "Season prep",
+    detail: "Recommended for serious athletes preparing for their upcoming season.",
+    googleValue: "20-Workout Package ($1,395)",
+  },
+];
+
+const FLEX_PACKAGE_IDS = new Set<FlexPackageId>(
+  FLEX_PACKAGE_OPTIONS.map((option) => option.id),
+);
+
 const STEPS: Array<{
   id: StepId;
   label: string;
@@ -351,7 +420,9 @@ function todayInputValue() {
 }
 
 function storageKeyForMode(mode: SessionMode) {
-  return mode === "spring" ? SPRING_STORAGE_KEY : SUMMER_STORAGE_KEY;
+  if (mode === "spring") return SPRING_STORAGE_KEY;
+  if (mode === "summer-flex") return SUMMER_FLEX_STORAGE_KEY;
+  return SUMMER_STORAGE_KEY;
 }
 
 function initialFormState(): RegistrationFormState {
@@ -376,6 +447,7 @@ function initialFormState(): RegistrationFormState {
     facilityLocation: FACILITY_LOCATION,
     packageChoice: "standard",
     springPackage: "",
+    flexPackage: "",
     waiverAccepted: false,
     siblingDiscountName: "",
     digitalSignature: "",
@@ -402,6 +474,10 @@ function loadDraft(mode: SessionMode): RegistrationFormState {
       springPackage:
         parsed.springPackage && SPRING_PACKAGE_IDS.has(parsed.springPackage as SpringPackageId)
           ? (parsed.springPackage as SpringPackageId)
+          : "",
+      flexPackage:
+        parsed.flexPackage && FLEX_PACKAGE_IDS.has(parsed.flexPackage as FlexPackageId)
+          ? (parsed.flexPackage as FlexPackageId)
           : "",
     };
   } catch {
@@ -542,6 +618,10 @@ function validateStep(
       if (!form.springPackage) {
         errors.springPackage = "Spring package is required.";
       }
+    } else if (mode === "summer-flex") {
+      if (!form.flexPackage) {
+        errors.flexPackage = "Flex package is required.";
+      }
     } else {
       addRequired(errors, form, "packageChoice", "Package choice");
     }
@@ -594,6 +674,8 @@ function validatePayloadAgainstForm(
     "318356955": form.membershipStatus,
     "115424816": form.facilityLocation,
     "578812469": "I have read and agree to the terms.",
+    // summer-flex is still part of the Summer 2026 season; only Session value
+    // that differs is the spring track.
     [ENTRY_SESSION]: mode === "spring" ? "Spring 2026" : "Summer 2026",
   };
 
@@ -648,6 +730,9 @@ function buildGooglePayload(form: RegistrationFormState, mode: SessionMode) {
   const selectedSpringPackage = SPRING_PACKAGE_OPTIONS.find(
     (option) => option.id === form.springPackage,
   );
+  const selectedFlexPackage = FLEX_PACKAGE_OPTIONS.find(
+    (option) => option.id === form.flexPackage,
+  );
   const body = new URLSearchParams();
 
   body.set("emailAddress", form.email.trim());
@@ -681,6 +766,18 @@ function buildGooglePayload(form: RegistrationFormState, mode: SessionMode) {
         ? `Spring 2026 - ${selectedSpringPackage.googleValue}`
         : "Spring 2026 Registration",
     );
+  } else if (mode === "summer-flex") {
+    // No dedicated Flex Package question on the Google Form yet, so we stuff
+    // the chosen flex package into the required Summer Track field with a
+    // recognizable prefix. The Apps Script email and the responses sheet both
+    // read this prefix to identify flex rows.
+    body.set(
+      `entry.${ENTRY_SUMMER_TRACK}`,
+      selectedFlexPackage
+        ? `Summer 2026 Flex - ${selectedFlexPackage.googleValue}`
+        : "Summer 2026 Flex Registration",
+    );
+    body.set(`entry.${ENTRY_SPRING_PACKAGE}`, "");
   } else {
     body.set(`entry.${ENTRY_SUMMER_TRACK}`, selectedPackage?.googleValue ?? "");
     body.set(`entry.${ENTRY_SPRING_PACKAGE}`, "");
@@ -714,7 +811,9 @@ function countStepAnswers(
   const programFields: Array<keyof RegistrationFormState> =
     mode === "spring"
       ? ["skillLevel", "heardFrom", "membershipStatus", "springPackage"]
-      : ["skillLevel", "heardFrom", "membershipStatus", "packageChoice"];
+      : mode === "summer-flex"
+        ? ["skillLevel", "heardFrom", "membershipStatus", "flexPackage"]
+        : ["skillLevel", "heardFrom", "membershipStatus", "packageChoice"];
 
   const groups: Record<StepId, Array<keyof RegistrationFormState>> = {
     athlete: [
@@ -959,6 +1058,7 @@ const RegistrationPacket = ({
   onModeChange,
   selectedPackage,
   selectedSpringPackage,
+  selectedFlexPackage,
   intentKey,
 }: RegistrationPacketProps) => {
   const [form, setForm] = useState<RegistrationFormState>(() => loadDraft(mode));
@@ -1002,6 +1102,15 @@ const RegistrationPacket = ({
   }, [selectedSpringPackage, intentKey]);
 
   useEffect(() => {
+    if (!selectedFlexPackage) return;
+    if (!FLEX_PACKAGE_IDS.has(selectedFlexPackage)) return;
+    setForm((current) => ({
+      ...current,
+      flexPackage: selectedFlexPackage,
+    }));
+  }, [selectedFlexPackage, intentKey]);
+
+  useEffect(() => {
     if (typeof window === "undefined" || submitState === "submitted") return;
     window.sessionStorage.setItem(storageKeyForMode(mode), JSON.stringify(form));
   }, [form, mode, submitState]);
@@ -1031,6 +1140,11 @@ const RegistrationPacket = ({
     () =>
       SPRING_PACKAGE_OPTIONS.find((option) => option.id === form.springPackage),
     [form.springPackage],
+  );
+
+  const selectedFlexPackageDetails = useMemo(
+    () => FLEX_PACKAGE_OPTIONS.find((option) => option.id === form.flexPackage),
+    [form.flexPackage],
   );
 
   const activeStepIndex = STEPS.findIndex((step) => step.id === activeStep);
@@ -1163,7 +1277,11 @@ const RegistrationPacket = ({
         <div className="container py-16 md:py-24">
           <div className="border-2 border-ink bg-orange p-8 md:p-12 shadow-[8px_8px_0_0_hsl(var(--ink))]">
             <div className="font-mono-display text-xs uppercase tracking-[0.28em] text-ink/70">
-              {mode === "spring" ? "Spring registration sent" : "Registration sent"}
+              {mode === "spring"
+                ? "Spring registration sent"
+                : mode === "summer-flex"
+                  ? "Summer Flex registration sent"
+                  : "Registration sent"}
             </div>
             <h2 className="mt-4 font-display text-5xl uppercase leading-[0.9] md:text-7xl">
               Registration received.
@@ -1171,7 +1289,9 @@ const RegistrationPacket = ({
             <p className="mt-6 max-w-2xl font-ui text-lg leading-relaxed text-ink/80">
               {mode === "spring"
                 ? "Your athlete is in the system for Spring 2026 sessions. DSC Hoops will reach out to confirm the package, schedule your sessions, and walk you through the Executive Health Club membership. Watch the email and phone number you provided."
-                : "Your athlete is in the system. DSC Hoops will reach out to confirm the spot and walk you through the Executive Health Club membership before sessions start June 16. Watch the email and phone number you provided."}
+                : mode === "summer-flex"
+                  ? "Your athlete is in the system for Summer Flex. DSC Hoops will reach out to schedule your sessions against the published afternoon availability and walk you through the Executive Health Club membership. Watch the email and phone number you provided."
+                  : "Your athlete is in the system. DSC Hoops will reach out to confirm the spot and walk you through the Executive Health Club membership before sessions start June 16. Watch the email and phone number you provided."}
             </p>
             <button
               type="button"
@@ -1208,7 +1328,7 @@ const RegistrationPacket = ({
         <div
           role="tablist"
           aria-label="Choose registration session"
-          className="mt-6 grid gap-2 border-2 border-ink bg-bone p-2 sm:grid-cols-2"
+          className="mt-6 grid gap-2 border-2 border-ink bg-bone p-2 sm:grid-cols-3"
         >
           {(
             [
@@ -1217,6 +1337,12 @@ const RegistrationPacket = ({
                 eyebrow: "Summer 2026",
                 label: "9-week Workhouse program",
                 meta: "June 16 - Aug 13",
+              },
+              {
+                id: "summer-flex" as const,
+                eyebrow: "Summer Flex",
+                label: "5 / 10 / 15 / 20 workouts",
+                meta: "Afternoons, scheduled by email",
               },
               {
                 id: "spring" as const,
@@ -1270,6 +1396,11 @@ const RegistrationPacket = ({
                   Get your athlete into{" "}
                   <span className="text-orange">spring sessions.</span>
                 </>
+              ) : mode === "summer-flex" ? (
+                <>
+                  Lock in a{" "}
+                  <span className="text-orange">Summer Flex pack.</span>
+                </>
               ) : (
                 <>
                   Lock in your athlete's{" "}
@@ -1281,7 +1412,9 @@ const RegistrationPacket = ({
           <p className="max-w-xl font-ui text-lg leading-relaxed text-ink/80 lg:justify-self-end">
             {mode === "spring"
               ? "Spring sessions are still running. Pick a Small Group or Group package, fill out one athlete at a time, and DSC Hoops will reach out to schedule. Your progress is saved if you need to step away."
-              : "Register one athlete at a time. Work through each section, review every answer, and submit when your family is ready. Your progress is saved if you need to step away."}
+              : mode === "summer-flex"
+                ? "Summer Flex runs June 16 - Aug 13 on afternoons. Pick a workout pack, fill out one athlete at a time, and DSC Hoops will reach out to schedule sessions via hoops@dscinternationalgroup.com. Your progress is saved if you need to step away."
+                : "Register one athlete at a time. Work through each section, review every answer, and submit when your family is ready. Your progress is saved if you need to step away."}
           </p>
         </div>
 
@@ -1359,7 +1492,11 @@ const RegistrationPacket = ({
 
             <div className="mt-5 border-2 border-ink bg-ink p-5 text-bone">
               <div className="font-mono-display text-[10px] uppercase tracking-[0.25em] text-bone/60">
-                {mode === "spring" ? "Selected spring package" : "Selected program"}
+                {mode === "spring"
+                  ? "Selected spring package"
+                  : mode === "summer-flex"
+                    ? "Selected flex package"
+                    : "Selected program"}
               </div>
               <div className="mt-3 font-display text-3xl uppercase leading-none">
                 {form.athleteName || "New athlete"}
@@ -1369,7 +1506,11 @@ const RegistrationPacket = ({
                   ? selectedSpringPackageDetails
                     ? `${selectedSpringPackageDetails.label} - ${selectedSpringPackageDetails.price}`
                     : "Pick a package in step 03"
-                  : `${selectedPackageDetails?.label} - ${selectedPackageDetails?.price}`}
+                  : mode === "summer-flex"
+                    ? selectedFlexPackageDetails
+                      ? `${selectedFlexPackageDetails.label} - ${selectedFlexPackageDetails.price}`
+                      : "Pick a flex pack in step 03"
+                    : `${selectedPackageDetails?.label} - ${selectedPackageDetails?.price}`}
               </div>
             </div>
           </aside>
@@ -1584,6 +1725,40 @@ const RegistrationPacket = ({
                         }))}
                       />
                     </div>
+                  ) : mode === "summer-flex" ? (
+                    <div>
+                      <div className="mb-3 flex items-center justify-between gap-3 font-mono-display text-[11px] uppercase tracking-[0.22em] text-ink/70">
+                        <span>Flex Package</span>
+                        <span className="shrink-0 tracking-[0.16em] text-orange">
+                          Required
+                        </span>
+                      </div>
+                      <div className="mb-4 border-2 border-ink bg-bone p-4">
+                        <div className="font-display text-3xl uppercase leading-none text-ink">
+                          Pick a flex workout pack.
+                        </div>
+                        <p className="mt-2 font-ui text-sm text-ink/75">
+                          Packages run June 16 - Aug 13. After you register,
+                          schedule your sessions with DSC Hoops at
+                          hoops@dscinternationalgroup.com against the published
+                          afternoon availability (Tue 2 & 3 PM, Wed/Thu 4 & 5 PM).
+                        </p>
+                      </div>
+                      <ChoiceGrid
+                        value={form.flexPackage}
+                        error={errors.flexPackage}
+                        onChange={(value) =>
+                          updateField("flexPackage", value as FlexPackageId)
+                        }
+                        options={FLEX_PACKAGE_OPTIONS.map((option) => ({
+                          value: option.id,
+                          label: option.label,
+                          detail: option.detail,
+                          price: option.price,
+                          eyebrow: option.kicker,
+                        }))}
+                      />
+                    </div>
                   ) : (
                     <div>
                       <div className="mb-3 flex items-center justify-between gap-3 font-mono-display text-[11px] uppercase tracking-[0.22em] text-ink/70">
@@ -1791,9 +1966,13 @@ const RegistrationPacket = ({
                           ? selectedSpringPackageDetails
                             ? `${selectedSpringPackageDetails.label} - ${selectedSpringPackageDetails.price}`
                             : "Not set"
-                          : `${selectedPackageDetails?.label ?? "Not set"} - ${
-                              selectedPackageDetails?.price ?? ""
-                            }`
+                          : mode === "summer-flex"
+                            ? selectedFlexPackageDetails
+                              ? `${selectedFlexPackageDetails.label} - ${selectedFlexPackageDetails.price}`
+                              : "Not set"
+                            : `${selectedPackageDetails?.label ?? "Not set"} - ${
+                                selectedPackageDetails?.price ?? ""
+                              }`
                       }
                     />
                   </ReviewGroup>

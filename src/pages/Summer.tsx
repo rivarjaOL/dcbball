@@ -5,7 +5,9 @@ import heroPlayer from "@/assets/hero-player.jpg";
 import summerHero from "@/assets/summer-hero.jpg";
 import workhouseLogo from "@/assets/workhouse-logo.png";
 import RegistrationPacket, {
+  FLEX_PACKAGE_OPTIONS,
   SPRING_PACKAGE_OPTIONS,
+  type FlexPackageId,
   type ProgramPackageId,
   type SessionMode,
   type SpringPackageId,
@@ -130,7 +132,9 @@ const SectionLabel = ({
 function readInitialSessionMode(): SessionMode {
   if (typeof window === "undefined") return "summer";
   const param = new URLSearchParams(window.location.search).get("session");
-  return param === "spring" ? "spring" : "summer";
+  if (param === "spring") return "spring";
+  if (param === "summer-flex" || param === "flex") return "summer-flex";
+  return "summer";
 }
 
 const Summer = () => {
@@ -141,17 +145,20 @@ const Summer = () => {
   const [registrationIntent, setRegistrationIntent] = useState<{
     packageId?: ProgramPackageId;
     springPackageId?: SpringPackageId;
+    flexPackageId?: FlexPackageId;
     key: number;
   }>({ key: 0 });
 
   // Keep ?session=... in sync with the toggle so the choice survives a refresh
-  // and the URL is shareable. We replace rather than push so spring/summer
-  // toggling doesn't pollute the back-button history.
+  // and the URL is shareable. We replace rather than push so toggling between
+  // tracks doesn't pollute the back-button history.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const url = new URL(window.location.href);
     if (sessionMode === "spring") {
       url.searchParams.set("session", "spring");
+    } else if (sessionMode === "summer-flex") {
+      url.searchParams.set("session", "summer-flex");
     } else {
       url.searchParams.delete("session");
     }
@@ -186,6 +193,23 @@ const Summer = () => {
       setSessionMode("spring");
       setRegistrationIntent((current) => ({
         springPackageId,
+        key: current.key + 1,
+      }));
+
+      document.getElementById("register")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    };
+
+  const jumpToFlexRegistration =
+    (flexPackageId?: FlexPackageId) =>
+    (event: MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
+      event.preventDefault();
+      setMenuOpen(false);
+      setSessionMode("summer-flex");
+      setRegistrationIntent((current) => ({
+        flexPackageId,
         key: current.key + 1,
       }));
 
@@ -250,6 +274,9 @@ const Summer = () => {
             <a href="#pricing" className="transition-colors hover:text-orange">
               Pricing
             </a>
+            <a href="#flex" className="transition-colors hover:text-orange">
+              Flex
+            </a>
             <a href="#spring" className="transition-colors hover:text-orange">
               Spring
             </a>
@@ -292,6 +319,9 @@ const Summer = () => {
               </a>
               <a href="#pricing" onClick={() => setMenuOpen(false)}>
                 Pricing
+              </a>
+              <a href="#flex" onClick={() => setMenuOpen(false)}>
+                Summer Flex
               </a>
               <a href="#spring" onClick={() => setMenuOpen(false)}>
                 Spring Sessions
@@ -628,6 +658,58 @@ const Summer = () => {
               </div>
             ))}
           </div>
+
+          <div className="mt-10 border-2 border-ink bg-bone">
+            <div className="flex flex-col gap-3 border-b-2 border-ink p-5 md:flex-row md:items-baseline md:justify-between md:p-6">
+              <div>
+                <div className="font-mono-display text-[10px] uppercase tracking-[0.25em] text-orange">
+                  Summer Flex hours
+                </div>
+                <h3 className="mt-2 font-display text-3xl uppercase leading-none md:text-4xl">
+                  Afternoon training windows.
+                </h3>
+              </div>
+              <p className="max-w-md font-ui text-sm text-ink/70">
+                Flex Workout packs run June 16 - Aug 13. Sessions are booked with
+                DSC Hoops directly via{" "}
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className="font-semibold text-ink underline underline-offset-4"
+                >
+                  {CONTACT_EMAIL}
+                </a>
+                .
+              </p>
+            </div>
+            <div className="grid border-ink md:grid-cols-3">
+              {[
+                { day: "Tuesday", slots: ["2:00 PM", "3:00 PM"] },
+                { day: "Wednesday", slots: ["4:00 PM", "5:00 PM"] },
+                { day: "Thursday", slots: ["4:00 PM", "5:00 PM"] },
+              ].map((entry, index) => (
+                <div
+                  key={entry.day}
+                  className={`p-5 md:p-6 ${
+                    index !== 2
+                      ? "border-b-2 border-ink md:border-b-0 md:border-r-2"
+                      : ""
+                  }`}
+                >
+                  <div className="font-display text-3xl uppercase leading-none">
+                    {entry.day}
+                  </div>
+                  <ul className="mt-4 space-y-2 font-mono-display text-sm uppercase tracking-[0.18em] text-ink/80">
+                    {entry.slots.map((slot) => (
+                      <li key={slot} className="flex items-center gap-3">
+                        <span className="h-1.5 w-1.5 shrink-0 bg-orange" />
+                        {slot}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -753,6 +835,108 @@ const Summer = () => {
                 </a>
               </div>
             </div>
+          </div>
+
+          <a
+            href="#flex"
+            className="mt-10 flex flex-col items-start justify-between gap-3 border-2 border-ink bg-bone p-5 transition-colors hover:bg-ink hover:text-bone md:flex-row md:items-center md:p-6"
+          >
+            <div>
+              <div className="font-mono-display text-[10px] uppercase tracking-[0.25em] text-orange">
+                New for Summer 2026
+              </div>
+              <div className="mt-2 font-display text-2xl uppercase leading-none md:text-3xl">
+                Flex Workout packs — afternoons, 5 to 20 sessions.
+              </div>
+            </div>
+            <span className="inline-flex items-center justify-center border-2 border-current px-4 py-2 font-mono-display text-[11px] uppercase tracking-wider">
+              See flex options →
+            </span>
+          </a>
+        </div>
+      </section>
+
+      <section id="flex" className="border-b-2 border-ink bg-ink text-bone">
+        <div className="container py-16 md:py-24">
+          <div className="mb-12 grid grid-cols-12 items-end gap-6">
+            <div className="col-span-12 md:col-span-8">
+              <div className="flex items-center gap-3 font-mono-display text-xs uppercase tracking-[0.28em] text-bone/70">
+                <span className="text-orange">[FX]</span>
+                <span className="h-px w-10 bg-bone/30" />
+                <span>Summer Flex</span>
+              </div>
+              <h2 className="mt-4 font-display text-5xl uppercase leading-[0.9] md:text-7xl">
+                Flex packs.
+                <br />
+                <span className="text-orange">Summer afternoons.</span>
+              </h2>
+            </div>
+            <div className="col-span-12 md:col-span-4 md:text-right">
+              <p className="font-ui text-bone/70">
+                Can't make the 5 AM Warrior block? Lock in a Flex Workout pack
+                and schedule sessions on the published afternoon windows. All
+                packages run June 16 - Aug 13.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {FLEX_PACKAGE_OPTIONS.map((option) => (
+              <div
+                key={option.id}
+                className="flex flex-col border-2 border-bone bg-ink p-6 text-bone"
+              >
+                <div className="font-mono-display text-[10px] uppercase tracking-[0.25em] text-orange">
+                  {option.kicker}
+                </div>
+                <h3 className="mt-3 font-display text-3xl uppercase leading-none md:text-4xl">
+                  {option.sessions} Workouts
+                </h3>
+                <div className="mt-4 font-display text-5xl text-orange">
+                  {option.price}
+                </div>
+                <p className="mt-3 font-ui text-sm text-bone/75">
+                  {option.detail}
+                </p>
+                <button
+                  type="button"
+                  onClick={jumpToFlexRegistration(option.id)}
+                  className="mt-auto inline-flex items-center justify-center border-2 border-bone px-4 py-3 font-mono-display text-xs uppercase tracking-wider transition-colors hover:bg-bone hover:text-ink"
+                >
+                  Register {option.sessions}-pack →
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 grid gap-4 border-2 border-bone p-5 md:grid-cols-[auto_1fr] md:items-center md:gap-6 md:p-6">
+            <div className="font-mono-display text-[10px] uppercase tracking-[0.25em] text-orange">
+              Scheduling
+            </div>
+            <div className="font-ui text-sm text-bone/80">
+              After you register, all Flex sessions are booked directly with DSC
+              Hoops at{" "}
+              <a
+                href={`mailto:${CONTACT_EMAIL}?subject=Summer%20Flex%20scheduling`}
+                className="font-semibold text-bone underline underline-offset-4"
+              >
+                {CONTACT_EMAIL}
+              </a>
+              . Training windows are Tuesday 2 & 3 PM and Wednesday / Thursday
+              4 & 5 PM.
+            </div>
+          </div>
+
+          <div className="mt-6 flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between">
+            <p className="font-mono-display text-xs uppercase tracking-[0.22em] text-bone/65">
+              Want the full 5 AM Warrior program instead?
+            </p>
+            <a
+              href="#pricing"
+              className="inline-flex items-center justify-center border-2 border-bone px-4 py-2 font-mono-display text-[11px] uppercase tracking-wider transition-colors hover:bg-bone hover:text-ink"
+            >
+              Compare full program →
+            </a>
           </div>
         </div>
       </section>
@@ -920,6 +1104,7 @@ const Summer = () => {
         onModeChange={setSessionMode}
         selectedPackage={registrationIntent.packageId}
         selectedSpringPackage={registrationIntent.springPackageId}
+        selectedFlexPackage={registrationIntent.flexPackageId}
         intentKey={registrationIntent.key}
       />
 

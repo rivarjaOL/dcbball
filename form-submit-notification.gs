@@ -59,6 +59,36 @@ function onFormSubmit(e) {
     springPackage = String(named['Spring Package'][0]).trim();
   }
 
+  // Summer Flex registrations are submitted by the React intake with the
+  // chosen flex pack stuffed into the required Summer Track field, prefixed
+  // with "Summer 2026 Flex - ". The dedicated Flex Package column does not
+  // exist on the form yet (planned follow-up); for now we parse the prefix
+  // out of Summer Track so the email body surfaces the chosen pack cleanly.
+  // Read the future "Flex Package" column first if it exists, so the script
+  // doesn't need a follow-up edit once the form is updated.
+  var flexPackage = '';
+  if (named['Flex Package'] && named['Flex Package'][0]) {
+    flexPackage = String(named['Flex Package'][0]).trim();
+  }
+  // Fallback: scan every form column for the "Summer 2026 Flex - " prefix that
+  // the React intake stuffs into the required Summer Track field. This is
+  // resilient to the exact header used for the Summer Track question (it has
+  // been edited a few times); whichever column carries the value, we pick it
+  // up.
+  if (!flexPackage) {
+    var FLEX_PREFIX = 'Summer 2026 Flex - ';
+    for (var key in named) {
+      if (!named.hasOwnProperty(key)) continue;
+      var entry = named[key];
+      if (!entry || !entry[0]) continue;
+      var val = String(entry[0]).trim();
+      if (val.indexOf(FLEX_PREFIX) === 0) {
+        flexPackage = val.substring(FLEX_PREFIX.length);
+        break;
+      }
+    }
+  }
+
   // Build email subject — prefix tells David at a glance which program the
   // family is registering for so follow-up doesn't get crossed.
   var subject = sessionLabel + ' Registration: ' + playerName;
@@ -71,6 +101,12 @@ function onFormSubmit(e) {
   ];
   if (springPackage) {
     bodyLines.push('Spring package: ' + springPackage);
+  }
+  if (flexPackage) {
+    bodyLines.push('Summer Flex package: ' + flexPackage);
+    bodyLines.push(
+      'Schedule with the family directly — Flex sessions are booked by email.'
+    );
   }
   bodyLines.push(
     '',

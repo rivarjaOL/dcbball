@@ -139,30 +139,36 @@ The site does **not** write directly to Google Sheets. It submits to the same Go
 
 The registration packet maps 1-to-1 to the current summer Google Form entry IDs. If the Google Form fields change, update `buildGooglePayload()` in `src/components/RegistrationPacket.tsx` and revalidate the public form metadata before deploying.
 
-### Spring vs. Summer mode
+### Summer / Summer Flex / Spring mode
 
-The same Google Form (and same response sheet) handles both summer registrations and the Spring 2026 per-session menu (Small Group + Group packages from the pre-facelift site).
+The same Google Form (and same response sheet) handles three intake tracks:
+
+1. **Summer** — full 9-week Workhouse Warrior program (Standard $4,000, Weekly $550).
+2. **Summer Flex** — 5 / 10 / 15 / 20-workout afternoon packs ($475 / $825 / $1,125 / $1,395). Sessions are scheduled directly with `hoops@dscinternationalgroup.com` against the published afternoon windows (Tue 2 & 3 PM, Wed/Thu 4 & 5 PM).
+3. **Spring** — per-session Small Group / Group menu from the pre-facelift site.
 
 Mode is controlled by:
 
-- A toggle at the top of the registration section in `src/components/RegistrationPacket.tsx`
-- A URL param `?session=spring` synced from `Summer.tsx` so the choice survives a refresh and is shareable
-- A `mode` prop on `<RegistrationPacket>`; spring mode swaps the Summer Package picker for `SPRING_PACKAGE_OPTIONS`
+- A 3-way toggle at the top of the registration section in `src/components/RegistrationPacket.tsx`
+- A URL param `?session=spring` or `?session=summer-flex` synced from `Summer.tsx` so the choice survives a refresh and is shareable
+- A `mode` prop on `<RegistrationPacket>`; each mode swaps in its own package picker (`PACKAGE_OPTIONS`, `FLEX_PACKAGE_OPTIONS`, or `SPRING_PACKAGE_OPTIONS`)
 
 Two backend-only Google Form questions distinguish the rows in the sheet:
 
 | Question | Entry ID | Required | Notes |
 |---|---|---|---|
-| Session | `entry.162964379` | yes | Always sent. Values: `Spring 2026` or `Summer 2026`. |
+| Session | `entry.162964379` | yes | Always sent. Values: `Spring 2026` or `Summer 2026` (summer-flex sends `Summer 2026`). |
 | Spring Package | `entry.1827625793` | no | Sent only in spring mode. One of the 10 options matching `SPRING_PACKAGE_OPTIONS[i].googleValue`. |
 
-The existing **Summer Track** field (`entry.1351164016`) is required by the Google Form, so spring submissions populate it with a fallback string `Spring 2026 - <package text>` to satisfy the required check while keeping the row human-readable.
+The existing **Summer Track** field (`entry.1351164016`) is required by the Google Form, so spring submissions populate it with a fallback string `Spring 2026 - <package text>`, and **summer-flex** submissions populate it with `Summer 2026 Flex - <package text>`. These fallbacks satisfy the required check while keeping the row human-readable and identifiable from the column value alone.
 
-Both new questions live in the existing last section of the form (Acknowledgements & Agreements) — **no new section breaks were added**, so `pageHistory` stays `0,1,2,3,4`. If a section break is ever added or removed, update the `pageHistory` value in `buildGooglePayload()` and re-verify against the responses sheet.
+A dedicated **Flex Package** Google Form question has **not** been added yet — when it is, wire an `ENTRY_FLEX_PACKAGE` constant in `RegistrationPacket.tsx` mirroring the spring split (clean column + fallback string) and add the four flex `googleValue` strings to `FORM_ACCEPTED_VALUES`. Until then, the Summer Track prefix is the source of truth for flex rows.
 
-The Apps Script still relies on the exact response column header `"Athlete's Name"` when building the email subject. It also reads `Session` to prefix the subject (`Spring Registration:` vs `Summer Registration:`) and `Spring Package` for the body. **The script in `form-submit-notification.gs` is the source of truth, but Google Apps Script runs from a copy in the cloud — paste this file into the script editor whenever it changes.**
+Both backend-only questions live in the existing last section of the form (Acknowledgements & Agreements) — **no new section breaks were added**, so `pageHistory` stays `0,1,2,3,4`. If a section break is ever added or removed, update the `pageHistory` value in `buildGooglePayload()` and re-verify against the responses sheet.
 
-Drafts are saved per mode under separate sessionStorage keys: `workhouse-summer-registration-draft` and `workhouse-spring-registration-draft`. Toggling between modes loads that mode's draft cleanly.
+The Apps Script still relies on the exact response column header `"Athlete's Name"` when building the email subject. It also reads `Session` to prefix the subject (`Spring Registration:` vs `Summer Registration:` — summer-flex keeps `Summer Registration:`), `Spring Package` for the body, and scans every column for a `"Summer 2026 Flex - "` prefix so the Flex pack surfaces in the email regardless of the Summer Track column's exact header. **The script in `form-submit-notification.gs` is the source of truth, but Google Apps Script runs from a copy in the cloud — paste this file into the script editor whenever it changes.**
+
+Drafts are saved per mode under separate sessionStorage keys: `workhouse-summer-registration-draft`, `workhouse-summer-flex-registration-draft`, and `workhouse-spring-registration-draft`. Toggling between modes loads that mode's draft cleanly.
 
 ---
 
@@ -175,7 +181,7 @@ The redesign uses a brutalist basketball training style:
 - Monospace utility labels through `Chakra Petch`
 - Tailwind custom tokens in `tailwind.config.ts` and `src/index.css`
 - Heavy borders, offset shadows, grid-paper texture, and high-contrast registration panels
-- Section IDs drive navigation: `#program`, `#schedule`, `#pricing`, `#spring`, `#register`
+- Section IDs drive navigation: `#program`, `#schedule`, `#pricing`, `#flex`, `#spring`, `#register`
 
 When editing UI, keep the registration packet and landing sections visually consistent with the current `Summer.tsx` and `RegistrationPacket.tsx` patterns.
 
@@ -186,7 +192,7 @@ When editing UI, keep the registration packet and landing sections visually cons
 - Public marketing site, no authentication
 - No API keys or secrets in the frontend
 - Registration data is not stored in this repo
-- Draft registration data is saved only in browser `sessionStorage` under `workhouse-summer-registration-draft` and `workhouse-spring-registration-draft`
+- Draft registration data is saved only in browser `sessionStorage` under `workhouse-summer-registration-draft`, `workhouse-summer-flex-registration-draft`, and `workhouse-spring-registration-draft`
 - The Google Form endpoint is public by design
 - Do not commit real registration exports or response data
 - Confirm with the client before changing email recipients, the response Sheet, or Apps Script behavior
