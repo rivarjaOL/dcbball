@@ -880,6 +880,36 @@ const Summer = () => {
             </div>
           </div>
 
+          <div className="mb-10 grid gap-3 border-2 border-orange bg-orange p-5 text-ink md:grid-cols-[auto_1fr_auto] md:items-center md:gap-6 md:p-6">
+            <div
+              aria-hidden="true"
+              className="flex h-12 w-12 items-center justify-center border-2 border-ink bg-ink font-display text-2xl leading-none text-orange md:h-14 md:w-14 md:text-3xl"
+            >
+              ⌖
+            </div>
+            <div>
+              <div className="font-mono-display text-[10px] uppercase tracking-[0.3em] text-ink/70">
+                Every Flex session
+              </div>
+              <div className="mt-1 font-display text-2xl uppercase leading-tight md:text-3xl">
+                Held at Executive Health Club
+              </div>
+              <div className="mt-1 font-ui text-sm text-ink/80">
+                Manchester, NH — same gym as the 5 AM Warrior program. An
+                active EHC membership (or the $255 summer membership) is
+                required before your first workout.
+              </div>
+            </div>
+            <a
+              href="https://maps.google.com/?q=Executive+Health+Club+Manchester+NH"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center border-2 border-ink px-4 py-2 font-mono-display text-[11px] uppercase tracking-wider text-ink transition-colors hover:bg-ink hover:text-orange md:self-center"
+            >
+              View location →
+            </a>
+          </div>
+
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {FLEX_PACKAGE_OPTIONS.map((option) => (
               <div
